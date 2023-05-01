@@ -1,4 +1,4 @@
-#include "TestingFramework.h"
+#include "../TestingFramework.h"
 
 TEST(TestingFramework, ExpectTrue) {
     EXPECT_TRUE(true);
