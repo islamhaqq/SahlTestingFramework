@@ -36,3 +36,8 @@ TEST(TestingFramework, FAIL)
 {
     EXPECT_FAIL(FAIL());
 }
+
+TEST(TestingFramework, ShouldCheckIfValueIsLessThanOrEqualToExpected) {
+    EXPECT_LE(5, 10);
+    EXPECT_FAIL(EXPECT_LE(10, 5));
+}

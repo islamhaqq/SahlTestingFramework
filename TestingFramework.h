@@ -32,6 +32,9 @@ using namespace std;
 #define EXPECT_STREQ(expected, actual) \
     ExpectStringEquals(expected, actual, #expected " == " #actual, __FILE__, __LINE__)
 
+#define EXPECT_LE(left, right) \
+    ExpectTrue(left <= right, #left " <= " #right, __FILE__, __LINE__) // TODO: Make a ExpectLE if necessary.
+
 #define FAIL() \
     Fail(__FILE__, __LINE__)
 
