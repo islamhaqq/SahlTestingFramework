@@ -83,8 +83,7 @@ void TestBase::ExpectTrue(const bool condition, const string& expression, const 
 {
     if (!condition)
     {
-        OutputExceptionFailed(expression, file, line);
-        FailureCount++;
+        FailTest(expression, file, line);
     }
 }
 
@@ -92,8 +91,7 @@ void TestBase::ExpectFalse(const bool condition, const string& expression, const
 {
     if (condition)
     {
-        OutputExceptionFailed(expression, file, line);
-        FailureCount++;
+        FailTest(expression, file, line);
     }
 }
 
@@ -113,8 +111,7 @@ void TestBase::ExpectStringEquals(const string& expected, const string& actual, 
 
 void TestBase::Fail(const char* file, int line)
 {
-    OutputExceptionFailed("Fail()", file, line);
-    FailureCount++;
+    FailTest("Fail()", file, line);
 }
 
 void TestBase::OutputExceptionFailed(const string& expression, const char* file, int line) const
@@ -123,4 +120,20 @@ void TestBase::OutputExceptionFailed(const string& expression, const char* file,
     {
         cerr << file << ":" << line << ": Failure: expected " << expression << endl;
     }
+}
+
+void TestBase::FailTest(const string& failureMessage, const string& expression, const char* file, int line)
+{
+    // TODO: Refactor - combine or do something with OutputExceptionFailed.
+    if(bShouldLog)
+    {
+        cerr << file << ":" << line << ": Failure: " << failureMessage << endl;
+    }
+    FailTest(expression, file, line);
+}
+
+void TestBase::FailTest(const string& expression, const char* file, int line)
+{
+    OutputExceptionFailed(expression, file, line);
+    FailureCount++;
 }

@@ -37,7 +37,16 @@ TEST(TestingFramework, FAIL)
     EXPECT_FAIL(FAIL());
 }
 
-TEST(TestingFramework, ShouldCheckIfValueIsLessThanOrEqualToExpected) {
+TEST(TestingFramework, EXPECT_LE) {
     EXPECT_LE(5, 10);
     EXPECT_FAIL(EXPECT_LE(10, 5));
+}
+
+TEST(TestingFramework, EXPECT_THROW)
+{
+    vector<int> empty_vector;
+    EXPECT_THROW(empty_vector.at(0), std::out_of_range);
+
+    vector<int> non_empty_vector{ 1, 2, 3 };
+    EXPECT_FAIL(EXPECT_THROW(non_empty_vector.at(1), std::out_of_range));
 }

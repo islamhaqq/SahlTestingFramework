@@ -35,6 +35,9 @@ using namespace std;
 #define EXPECT_LE(left, right) \
     ExpectTrue(left <= right, #left " <= " #right, __FILE__, __LINE__) // TODO: Make a ExpectLE if necessary.
 
+#define EXPECT_THROW(expression, exceptionType) \
+    ExpectThrow<exceptionType>([&]() { expression; }, #expression " throws " #exceptionType, __FILE__, __LINE__)
+
 #define FAIL() \
     Fail(__FILE__, __LINE__)
 
@@ -92,19 +95,22 @@ protected:
 
     void ExpectStringEquals(const string& expected, const string& actual, const string& expression, const char* file, int line);
     void Fail(const char* file, int line);
-    
+
+    template <typename T, typename F>
+    void ExpectThrow(F func, const string& expression, const char* file, int line);
 private:
     string Name;
     int FailureCount = 0;
     bool bShouldLog = true;
     
     void OutputExceptionFailed(const string& expression, const char* file, int line) const;
+    void FailTest(const string& failureMessage, const string& expression, const char* file, int line);
+    void FailTest(const string& expression, const char* file, int line);
 };
 
 template <typename Expression>
 void TestBase::ExpectFailure(Expression expression)
 {
-    // Prevent logging of failures within the expression because it is supposed to fail.
     SetShouldLog(false);
 
     const unsigned int initialFailureCount = FailureCount;
@@ -144,7 +150,24 @@ void TestBase::ExpectNotEqual(const T expected, const T actual, const string& ex
 {
     if (expected == actual)
     {
-        OutputExceptionFailed(expression, file, line);
-        FailureCount++;
+        FailTest(expression, file, line);
+    }
+}
+
+template <typename T, typename F>
+void TestBase::ExpectThrow(F func, const string& expression, const char* file, int line)
+{
+    try
+    {
+        func();
+        FailTest("Expected exception of type '" + string(typeid(T).name()) + "but no exception was thrown.", expression, file, line);
+    }
+    catch (const T&)
+    {
+        // Pass.
+    }
+    catch (...)
+    {
+        FailTest("Expected exception of type '" + string(typeid(T).name()) + "but a different exception was thrown.", expression, file, line);
     }
 }
