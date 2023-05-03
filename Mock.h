@@ -1,11 +1,19 @@
 #pragma once
 #include <functional>
 
-#define MOCK_METHOD(methodName) \
+template <typename ReturnType>
+class MockTing
+{
+public:
+    ReturnType retVal; \
+    void WillByDefault(std::function<ReturnType()> func) { retVal = func(); }
+};
+
+#define MOCK_METHOD(methodName, type) \
 public: \
-    int retVal = 5; \
-    int methodName() override { return retVal; } \
-    void WillByDefault(int x) { retVal = x; }
+    class MockTing##methodName : public MockTing<type> {}; \
+    MockTing##methodName theMock##methodName; \
+    type methodName() override { return theMock##methodName.retVal; } \
 
 #define ON_CALL(mocked_obj, method) \
-    mocked_obj
+    mocked_obj.theMock##method
