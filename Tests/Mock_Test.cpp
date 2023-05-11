@@ -8,14 +8,18 @@ public:
     virtual int SomeOtherMethod() = 0;
     virtual bool SomeBoolMethod() = 0;
     virtual std::string SomeStringMethod() = 0;
+    virtual int SomeMethodWithArg(int a) = 0;
+    // virtual int SomeMethodWithArgs(int a, int b) = 0;
 };
 
 class MockImplementation : public SomeInterface
 {
-    MOCK_METHOD(SomeMethod, int)
-    MOCK_METHOD(SomeOtherMethod, int)
-    MOCK_METHOD(SomeBoolMethod, bool)
-    MOCK_METHOD(SomeStringMethod, std::string)
+    MOCK_METHOD(int, SomeMethod)
+    MOCK_METHOD(int, SomeOtherMethod)
+    MOCK_METHOD(bool, SomeBoolMethod)
+    MOCK_METHOD(std::string, SomeStringMethod)
+    MOCK_METHOD(int, SomeMethodWithArg, int)
+    // MOCK_METHOD(int, SomeMethodWithArgs, (int a, int b))
 };
 
 TEST(TestingFramework, MOCK_METHOD_basic)
@@ -31,6 +35,9 @@ TEST(TestingFramework, MOCK_METHOD_basic)
     EXPECT_TRUE(mockImplementation.SomeBoolMethod());
     ON_CALL(mockImplementation, SomeBoolMethod).WillByDefault([]() { return false; });
     EXPECT_FALSE(mockImplementation.SomeBoolMethod());
+
+    ON_CALL(mockImplementation, SomeMethodWithArg).WillByDefault([](int a) { return a; });
+    EXPECT_EQ(mockImplementation.SomeMethodWithArg(5), 5);
 
     ON_CALL(mockImplementation, SomeStringMethod).WillByDefault([]() { return "Hello"; });
     EXPECT_STREQ(mockImplementation.SomeStringMethod().c_str(), "Hello");

@@ -1,19 +1,27 @@
 #pragma once
 #include <functional>
 
-template <typename ReturnType>
+template <typename ReturnType, typename... Args>
 class MockTing
 {
 public:
-    ReturnType retVal; \
-    void WillByDefault(std::function<ReturnType()> func) { retVal = func(); }
+    std::function<ReturnType(Args...)> func;
+
+    void WillByDefault(std::function<ReturnType(Args...)> new_func) { func = new_func; }
 };
 
-#define MOCK_METHOD(methodName, type) \
+#define MOCK_METHOD(returnType, methodName, ...) \
 public: \
-    class MockTing##methodName : public MockTing<type> {}; \
+    class MockTing##methodName : public MockTing<returnType, ##__VA_ARGS__> {}; \
     MockTing##methodName theMock##methodName; \
-    type methodName() override { return theMock##methodName.retVal; } \
+    returnType methodName(__VA_ARGS__) override \
+    { \
+        auto lambda = [this](auto&&... args) -> returnType \
+        { \
+            return theMock##methodName.func(std::forward<decltype(args)>(args)...); \
+        }; \
+        return lambda(__VA_ARGS__); \
+    }
 
 #define ON_CALL(mocked_obj, method) \
     mocked_obj.theMock##method
