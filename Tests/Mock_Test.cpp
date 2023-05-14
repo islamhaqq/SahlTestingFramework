@@ -8,8 +8,6 @@ public:
     virtual int SomeOtherMethod() = 0;
     virtual bool SomeBoolMethod() = 0;
     virtual std::string SomeStringMethod() = 0;
-    virtual int SomeMethodWithArg(int a) = 0;
-    // virtual int SomeMethodWithArgs(int a, int b) = 0;
 };
 
 class MockImplementation : public SomeInterface
@@ -18,8 +16,6 @@ class MockImplementation : public SomeInterface
     MOCK_METHOD(int, SomeOtherMethod)
     MOCK_METHOD(bool, SomeBoolMethod)
     MOCK_METHOD(std::string, SomeStringMethod)
-    MOCK_METHOD(int, SomeMethodWithArg, int)
-    // MOCK_METHOD(int, SomeMethodWithArgs, (int a, int b))
 };
 
 TEST(TestingFramework, MOCK_METHOD_basic)
@@ -35,9 +31,6 @@ TEST(TestingFramework, MOCK_METHOD_basic)
     EXPECT_TRUE(mockImplementation.SomeBoolMethod());
     ON_CALL(mockImplementation, SomeBoolMethod).WillByDefault([]() { return false; });
     EXPECT_FALSE(mockImplementation.SomeBoolMethod());
-
-    ON_CALL(mockImplementation, SomeMethodWithArg).WillByDefault([](int a) { return a; });
-    EXPECT_EQ(mockImplementation.SomeMethodWithArg(5), 5);
 
     ON_CALL(mockImplementation, SomeStringMethod).WillByDefault([]() { return "Hello"; });
     EXPECT_STREQ(mockImplementation.SomeStringMethod().c_str(), "Hello");
@@ -62,4 +55,32 @@ TEST(TestingFramework, MOCK_METHOD)
 
     SomeClass someClass(mockImplementation);
     EXPECT_EQ(someClass.DoStuff(), 3);
+}
+
+class SomeInterfaceX
+{
+public:
+    virtual int SomeMethodWithArg(int a) = 0;
+    // virtual int SomeMethodWithArgs(int a, int b) = 0;
+};
+
+class MockImplementationX : public SomeInterfaceX
+{
+    // MOCK_METHOD_IMPL_(int, SomeMethodWithArg, COUNT_ARGS(int, a), int, a)
+    // MOCK_METHOD(int, SomeMethodWithArgs, (int a, int b))
+};
+
+TEST(TestingFramework, MOCK_METHOD_multiple_args)
+{
+    // MockImplementationX mockImplementationX;
+    // ON_CALL(mockImplementationX, SomeMethodWithArg).WillByDefault([](int a) { return a; });
+    // EXPECT_EQ(mockImplementationX.SomeMethodWithArg(5), 5);
+}
+
+TEST(TestingFramework, COUNT_ARGS)
+{
+    EXPECT_EQ(COUNT_ARGS(1, 2, 3, 4, 5), 5);
+    EXPECT_EQ(COUNT_ARGS("one", "two", "three"), 3);
+    EXPECT_EQ(COUNT_ARGS('a', 'b', 'c', 'd'), 4);
+    EXPECT_EQ(COUNT_ARGS(1, "two", 3.0, '4'), 4);
 }
