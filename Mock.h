@@ -33,12 +33,17 @@ public: \
     mocked_obj.theMock##method
 
 #define EXPAND(x) x
-#define COUNT_ARGS(...) EXPAND(ARGS_AUGMENTER(__VA_ARGS__, 5, 4, 3, 2, 1, 0))
-#define ARGS_AUGMENTER(a1, a2, a3, a4, a5, count, ...) count
-#define MOCK_METHOD_NEW(returnType, methodName, ...) MOCK_METHOD_IMPL(returnType, methodName, __VA_ARGS__)
-#define MOCK_METHOD_IMPL(returnType, methodName, ...) MOCK_METHOD_IMPL_(returnType, methodName, COUNT_ARGS(__VA_ARGS__), __VA_ARGS__)
-#define MOCK_METHOD_IMPL_(returnType, methodName, numArgs, ...) MOCK_METHOD_IMPL__(returnType, methodName, numArgs, __VA_ARGS__)
-#define MOCK_METHOD_IMPL__(returnType, methodName, numArgs, ...) MOCK_METHOD##numArgs(returnType, methodName, __VA_ARGS__)
+#define GET_SIXTH_ARGUMENT(a1, a2, a3, a4, a5, count, ...) count
+#define COUNT_ARGS(...) EXPAND(GET_SIXTH_ARGUMENT(__VA_ARGS__, 5, 4, 3, 2, 1, 0))
+
+#define MOCK_METHOD_NEW(returnType, methodName, ...) \
+    MOCK_METHOD_IMPL(returnType, methodName, COUNT_ARGS(__VA_ARGS__), __VA_ARGS__)
+
+#define MOCK_METHOD_IMPL(returnType, methodName, numArgs, ...) \
+    MOCK_METHOD_IMPL_(returnType, methodName, numArgs, __VA_ARGS__)
+
+#define MOCK_METHOD_IMPL_(returnType, methodName, numArgs, ...) \
+    MOCK_METHOD##numArgs(returnType, methodName, __VA_ARGS__)
 
 #define MOCK_METHOD0(returnType, methodName) \
 public: \

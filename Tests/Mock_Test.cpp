@@ -61,20 +61,18 @@ class SomeInterfaceX
 {
 public:
     virtual int SomeMethodWithArg(int a) = 0;
-    // virtual int SomeMethodWithArgs(int a, int b) = 0;
 };
 
 class MockImplementationX : public SomeInterfaceX
 {
-    // MOCK_METHOD_IMPL_(int, SomeMethodWithArg, COUNT_ARGS(int, a), int, a)
-    // MOCK_METHOD(int, SomeMethodWithArgs, (int a, int b))
+    MOCK_METHOD_NEW(int, SomeMethodWithArg, int, a)
 };
 
 TEST(TestingFramework, MOCK_METHOD_multiple_args)
 {
-    // MockImplementationX mockImplementationX;
-    // ON_CALL(mockImplementationX, SomeMethodWithArg).WillByDefault([](int a) { return a; });
-    // EXPECT_EQ(mockImplementationX.SomeMethodWithArg(5), 5);
+    MockImplementationX mockImplementationX;
+    ON_CALL(mockImplementationX, SomeMethodWithArg).WillByDefault([](int a) { return a; });
+    EXPECT_EQ(mockImplementationX.SomeMethodWithArg(5), 5);
 }
 
 TEST(TestingFramework, COUNT_ARGS)
