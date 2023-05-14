@@ -34,7 +34,7 @@ public: \
 
 #define EXPAND(x) x
 #define GET_SIXTH_ARGUMENT(a1, a2, a3, a4, a5, count, ...) count
-#define COUNT_ARGS(...) EXPAND(GET_SIXTH_ARGUMENT(__VA_ARGS__, 5, 4, 3, 2, 1, 0))
+#define COUNT_ARGS(...) EXPAND(GET_SIXTH_ARGUMENT(__VA_ARGS__, 5, 2, 2, 1, 1, 0))
 
 #define MOCK_METHOD_NEW(returnType, methodName, ...) \
     MOCK_METHOD_IMPL(returnType, methodName, COUNT_ARGS(__VA_ARGS__), __VA_ARGS__)
@@ -59,4 +59,12 @@ public: \
     returnType methodName(arg1Type arg1Name) override \
     { \
         return theMock##methodName(arg1Name); \
+    }
+
+#define MOCK_METHOD2(returnType, methodName, arg1Type, arg1Name, arg2Type, arg2Name) \
+public: \
+    MockFunction<returnType, arg1Type, arg2Type> theMock##methodName; \
+    returnType methodName(arg1Type arg1Name, arg2Type arg2Name) override \
+    { \
+        return theMock##methodName(arg1Name, arg2Name); \
     }
