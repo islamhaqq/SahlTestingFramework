@@ -20,16 +20,16 @@ using namespace std;
 #define EXPECT_FALSE(condition) \
     ExpectFalse(condition, #condition " == false", __FILE__, __LINE__)
 
-#define EXPECT_EQ(expected, actual) \
+#define EXPECT_EQ(actual, expected) \
     ExpectEqual(expected, actual, #expected " == " #actual, __FILE__, __LINE__)
 
-#define EXPECT_NE(expected, actual) \
+#define EXPECT_NE(actual, expected) \
     ExpectNotEqual(expected, actual, #expected " != " #actual, __FILE__, __LINE__)
 
 #define EXPECT_FAIL(expression) \
     ExpectFailure([&]() { expression; })
 
-#define EXPECT_STREQ(expected, actual) \
+#define EXPECT_STREQ(actual, expected) \
     ExpectStringEquals(expected, actual, #expected " == " #actual, __FILE__, __LINE__)
 
 #define EXPECT_LE(left, right) \
@@ -134,6 +134,11 @@ void TestBase::ExpectEqual(T expected, U actual, const string& expression, const
     if (!comparator(expected, actual))
     {
         OutputExceptionFailed(expression, file, line);
+        if (bShouldLog)
+        {
+            cerr << ": Expected: " << expected << endl;
+            cerr << ": Actual: " << actual << endl;
+        }
         FailureCount++;
     }
 }
