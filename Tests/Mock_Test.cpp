@@ -18,7 +18,7 @@ class MockImplementation : public SomeInterface
     MOCK_METHOD(std::string, SomeStringMethod)
 };
 
-TEST(TestingFramework, MOCK_METHOD_basic)
+TEST(MOCK_METHOD, NoArguments)
 {
     MockImplementation mockImplementation;
     ON_CALL(mockImplementation, SomeMethod).WillByDefault([]() { return 5; });
@@ -44,7 +44,7 @@ public:
     int DoStuff() { return implementation.SomeMethod() + implementation.SomeOtherMethod(); }
 };
 
-TEST(TestingFramework, MOCK_METHOD)
+TEST(MOCK_METHOD, WithDependencyInjection)
 {
     MockImplementation mockImplementation;
 
@@ -60,22 +60,33 @@ TEST(TestingFramework, MOCK_METHOD)
 class SomeInterfaceX
 {
 public:
-    // virtual int SomeMethodWithArg(int a) = 0;
+    virtual int SomeMethodWithArg(int a) = 0;
+    virtual int SomeOtherMethodWithArg(float a) = 0;
 };
 
 class MockImplementationX : public SomeInterfaceX
 {
-    // MOCK_METHOD_IMPL_(int, SomeMethodWithArg, 1, int, a)
+    MOCK_METHOD_NEW(int, SomeMethodWithArg, int, a)
+    MOCK_METHOD_NEW(int, SomeOtherMethodWithArg, float, a)
 };
 
-TEST(TestingFramework, MOCK_METHOD_multiple_args)
+class ThrowawayImplementation : public SomeInterfaceX
 {
-    // MockImplementationX mockImplementationX;
-    // ON_CALL(mockImplementationX, SomeMethodWithArg).WillByDefault([](int a) { return a; });
-    // EXPECT_EQ(mockImplementationX.SomeMethodWithArg(5), 5);
+    MOCK_METHOD_NEW(int, SomeMethodWithArg, int, a)
+    MOCK_METHOD_NEW(int, SomeOtherMethodWithArg, float, a)
+};
+
+TEST(MockMethod, WithMultipleArguments)
+{
+    MockImplementationX mockImplementationX;
+    ON_CALL(mockImplementationX, SomeMethodWithArg).WillByDefault([](int a) { return a; });
+    EXPECT_EQ(mockImplementationX.SomeMethodWithArg(5), 5);
+
+    ON_CALL(mockImplementationX, SomeOtherMethodWithArg).WillByDefault([](int a) { return a + 1; });
+    EXPECT_EQ(mockImplementationX.SomeOtherMethodWithArg(5), 6);
 }
 
-TEST(TestingFramework, COUNT_ARGS)
+TEST(COUNT_ARGS, ReturnsNumberOfArguments)
 {
     EXPECT_EQ(COUNT_ARGS(1, 2, 3, 4, 5), 5);
     EXPECT_EQ(COUNT_ARGS("one", "two", "three"), 3);
@@ -83,7 +94,7 @@ TEST(TestingFramework, COUNT_ARGS)
     EXPECT_EQ(COUNT_ARGS(1, "two", 3.0, '4'), 4);
 }
 
-TEST(TestingFramework, COUNT_ARG_PAIRS)
+TEST(COUNT_ARG_PAIRS, ReturnsNumberOfArgumentPairs)
 {
     EXPECT_EQ(COUNT_ARG_PAIRS(int, a), 1);
     EXPECT_EQ(COUNT_ARG_PAIRS(float, arg1, int, arg2), 2);

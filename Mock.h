@@ -32,29 +32,20 @@ public: \
 #define ON_CALL(mocked_obj, method) \
     mocked_obj.theMock##method
 
+
+
+
 #define EXPAND(x) x
 #define GET_SIXTH_ARGUMENT(a1, a2, a3, a4, a5, count, ...) count
 #define COUNT_ARGS(...) EXPAND(GET_SIXTH_ARGUMENT(__VA_ARGS__, 5, 4, 3, 2, 1, 0))
 
 #define COUNT_ARG_PAIRS(...) EXPAND(GET_SIXTH_ARGUMENT(__VA_ARGS__, 3, 2, 2, 1, 1, 0))
 
-
 #define MOCK_METHOD_NEW(returnType, methodName, ...) \
     MOCK_METHOD_IMPL(returnType, methodName, COUNT_ARG_PAIRS(__VA_ARGS__), __VA_ARGS__)
 
-#define MOCK_METHOD_IMPL(returnType, methodName, numArgs, ...) \
-    MOCK_METHOD_IMPL_(returnType, methodName, numArgs, __VA_ARGS__)
-
-#define MOCK_METHOD_IMPL_(returnType, methodName, numArgs, ...) \
-    MOCK_METHOD##numArgs(returnType, methodName, __VA_ARGS__)
-
-#define MOCK_METHOD0(returnType, methodName) \
-public: \
-    MockFunction<returnType> theMock##methodName; \
-    returnType methodName() override \
-    { \
-        return theMock##methodName(); \
-    }
+#define GET_FIRST_ARGUMENT(a1, ...) a1
+#define MOCK_METHOD_IMPL(returnType, methodName, numArgs, ...) MOCK_METHOD1(returnType, methodName, GET_FIRST_ARGUMENT(__VA_ARGS__), a)
 
 #define MOCK_METHOD1(returnType, methodName, arg1Type, arg1Name) \
 public: \
@@ -62,12 +53,4 @@ public: \
     returnType methodName(arg1Type arg1Name) override \
     { \
         return theMock##methodName(arg1Name); \
-    }
-
-#define MOCK_METHOD2(returnType, methodName, arg1Type, arg1Name, arg2Type, arg2Name) \
-public: \
-    MockFunction<returnType, arg1Type, arg2Type> theMock##methodName; \
-    returnType methodName(arg1Type arg1Name, arg2Type arg2Name) override \
-    { \
-        return theMock##methodName(arg1Name, arg2Name); \
     }
