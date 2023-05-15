@@ -34,10 +34,13 @@ public: \
 
 #define EXPAND(x) x
 #define GET_SIXTH_ARGUMENT(a1, a2, a3, a4, a5, count, ...) count
-#define COUNT_ARGS(...) EXPAND(GET_SIXTH_ARGUMENT(__VA_ARGS__, 5, 2, 2, 1, 1, 0))
+#define COUNT_ARGS(...) EXPAND(GET_SIXTH_ARGUMENT(__VA_ARGS__, 5, 4, 3, 2, 1, 0))
+
+#define COUNT_ARG_PAIRS(...) EXPAND(GET_SIXTH_ARGUMENT(__VA_ARGS__, 3, 2, 2, 1, 1, 0))
+
 
 #define MOCK_METHOD_NEW(returnType, methodName, ...) \
-    MOCK_METHOD_IMPL(returnType, methodName, COUNT_ARGS(__VA_ARGS__), __VA_ARGS__)
+    MOCK_METHOD_IMPL(returnType, methodName, COUNT_ARG_PAIRS(__VA_ARGS__), __VA_ARGS__)
 
 #define MOCK_METHOD_IMPL(returnType, methodName, numArgs, ...) \
     MOCK_METHOD_IMPL_(returnType, methodName, numArgs, __VA_ARGS__)
