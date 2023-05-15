@@ -42,12 +42,12 @@ public: \
 #define COUNT_ARG_PAIRS(...) EXPAND(GET_SIXTH_ARGUMENT(__VA_ARGS__, 3, 2, 2, 1, 1, 0))
 
 #define MOCK_METHOD_NEW(returnType, methodName, ...) \
-    MOCK_METHOD_IMPL(returnType, methodName, COUNT_ARG_PAIRS(__VA_ARGS__), __VA_ARGS__)
+    MOCK_METHOD_IMPL_INDIRECTION_FOR_COUNT_ARG_PAIRS(returnType, methodName, COUNT_ARG_PAIRS(__VA_ARGS__), __VA_ARGS__)
+
+#define MOCK_METHOD_IMPL_INDIRECTION_FOR_COUNT_ARG_PAIRS(returnType, methodName, numArgs, ...) \
+    MOCK_METHOD_IMPL_(returnType, methodName, numArgs, __VA_ARGS__)
 
 #define GET_FIRST_ARGUMENT(a1, ...) a1
-#define MOCK_METHOD_IMPL(returnType, methodName, numArgs, ...) \
-    MOCK_METHOD_IMPL_(returnType, methodName, numArgs, GET_FIRST_ARGUMENT(__VA_ARGS__), a)
-
 #define MOCK_METHOD_IMPL_(returnType, methodName, numArgs, ...) \
     MOCK_METHOD##numArgs(returnType, methodName, GET_FIRST_ARGUMENT(__VA_ARGS__), a)
 
