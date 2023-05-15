@@ -45,7 +45,11 @@ public: \
     MOCK_METHOD_IMPL(returnType, methodName, COUNT_ARG_PAIRS(__VA_ARGS__), __VA_ARGS__)
 
 #define GET_FIRST_ARGUMENT(a1, ...) a1
-#define MOCK_METHOD_IMPL(returnType, methodName, numArgs, ...) MOCK_METHOD1(returnType, methodName, GET_FIRST_ARGUMENT(__VA_ARGS__), a)
+#define MOCK_METHOD_IMPL(returnType, methodName, numArgs, ...) \
+    MOCK_METHOD_IMPL_(returnType, methodName, numArgs, GET_FIRST_ARGUMENT(__VA_ARGS__), a)
+
+#define MOCK_METHOD_IMPL_(returnType, methodName, numArgs, ...) \
+    MOCK_METHOD##numArgs(returnType, methodName, GET_FIRST_ARGUMENT(__VA_ARGS__), a)
 
 #define MOCK_METHOD1(returnType, methodName, arg1Type, arg1Name) \
 public: \
@@ -53,4 +57,12 @@ public: \
     returnType methodName(arg1Type arg1Name) override \
     { \
         return theMock##methodName(arg1Name); \
+    }
+
+#define MOCK_METHOD2(returnType, methodName, arg1Type, arg1Name) \
+public: \
+    MockFunction<int, int, int> theMock##methodName; \
+    returnType methodName(int a, int b) override \
+    { \
+        return theMock##methodName(a, b); \
     }

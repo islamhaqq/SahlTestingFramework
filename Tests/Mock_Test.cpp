@@ -62,18 +62,16 @@ class SomeInterfaceX
 public:
     virtual int SomeMethodWithArg(int a) = 0;
     virtual int SomeOtherMethodWithArg(float a) = 0;
+    virtual float SomeMethodThatReturnsFloat(float a) = 0;
+    virtual int SomeMethodWithTwoArgs(int a, int b) = 0;
 };
 
 class MockImplementationX : public SomeInterfaceX
 {
     MOCK_METHOD_NEW(int, SomeMethodWithArg, int, a)
     MOCK_METHOD_NEW(int, SomeOtherMethodWithArg, float, a)
-};
-
-class ThrowawayImplementation : public SomeInterfaceX
-{
-    MOCK_METHOD_NEW(int, SomeMethodWithArg, int, a)
-    MOCK_METHOD_NEW(int, SomeOtherMethodWithArg, float, a)
+    MOCK_METHOD_NEW(float, SomeMethodThatReturnsFloat, float, a)
+    MOCK_METHOD_NEW(int, SomeMethodWithTwoArgs, int, a, int, b)
 };
 
 TEST(MockMethod, WithMultipleArguments)
@@ -84,6 +82,12 @@ TEST(MockMethod, WithMultipleArguments)
 
     ON_CALL(mockImplementationX, SomeOtherMethodWithArg).WillByDefault([](int a) { return a + 1; });
     EXPECT_EQ(mockImplementationX.SomeOtherMethodWithArg(5), 6);
+
+    ON_CALL(mockImplementationX, SomeMethodThatReturnsFloat).WillByDefault([](float a) { return a + 1.1f; });
+    EXPECT_EQ(mockImplementationX.SomeMethodThatReturnsFloat(5.0f), 6.1f);
+
+    ON_CALL(mockImplementationX, SomeMethodWithTwoArgs).WillByDefault([](int a, int b) { return a + b; });
+    EXPECT_EQ(mockImplementationX.SomeMethodWithTwoArgs(5, 6), 11);
 }
 
 TEST(COUNT_ARGS, ReturnsNumberOfArguments)
