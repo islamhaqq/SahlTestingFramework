@@ -1,6 +1,8 @@
 #pragma once
 #include <functional>
 
+#include "InternalMacros.h"
+
 template <typename ReturnType, typename... Args>
 class MockFunction
 {
@@ -28,18 +30,8 @@ public: \
         return lambda(__VA_ARGS__); \
     }
 
-
 #define ON_CALL(mocked_obj, method) \
     mocked_obj.theMock##method
-
-
-
-
-#define EXPAND(x) x
-#define GET_SIXTH_ARGUMENT(a1, a2, a3, a4, a5, count, ...) count
-#define COUNT_ARGS(...) EXPAND(GET_SIXTH_ARGUMENT(__VA_ARGS__, 5, 4, 3, 2, 1, 0))
-
-#define COUNT_ARG_PAIRS(...) EXPAND(GET_SIXTH_ARGUMENT(__VA_ARGS__, 3, 2, 2, 1, 1, 0))
 
 #define MOCK_METHOD_NEW(returnType, methodName, ...) \
     MOCK_METHOD_IMPL_INDIRECTION_FOR_COUNT_ARG_PAIRS(returnType, methodName, COUNT_ARG_PAIRS(__VA_ARGS__), __VA_ARGS__)
@@ -47,7 +39,6 @@ public: \
 #define MOCK_METHOD_IMPL_INDIRECTION_FOR_COUNT_ARG_PAIRS(returnType, methodName, numArgs, ...) \
     MOCK_METHOD_IMPL_(returnType, methodName, numArgs, __VA_ARGS__)
 
-#define GET_FIRST_ARGUMENT(a1, ...) a1
 #define MOCK_METHOD_IMPL_(returnType, methodName, numArgs, ...) \
     MOCK_METHOD##numArgs(returnType, methodName, GET_FIRST_ARGUMENT(__VA_ARGS__), a)
 

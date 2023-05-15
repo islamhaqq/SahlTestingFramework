@@ -90,16 +90,3 @@ TEST(MockMethod, WithMultipleArguments)
     EXPECT_EQ(mockImplementationX.SomeMethodWithTwoArgs(5, 6), 11);
 }
 
-TEST(COUNT_ARGS, ReturnsNumberOfArguments)
-{
-    EXPECT_EQ(COUNT_ARGS(1, 2, 3, 4, 5), 5);
-    EXPECT_EQ(COUNT_ARGS("one", "two", "three"), 3);
-    EXPECT_EQ(COUNT_ARGS('a', 'b', 'c', 'd'), 4);
-    EXPECT_EQ(COUNT_ARGS(1, "two", 3.0, '4'), 4);
-}
-
-TEST(COUNT_ARG_PAIRS, ReturnsNumberOfArgumentPairs)
-{
-    EXPECT_EQ(COUNT_ARG_PAIRS(int, a), 1);
-    EXPECT_EQ(COUNT_ARG_PAIRS(float, arg1, int, arg2), 2);
-}
