@@ -6,6 +6,8 @@ A unit testing framework for C++ that includes:
 * Expectations
 * Mocking
 
+The heavy usage of macros takes inspiration from Google Test. Although the implementation is different, the interface for creating tests and mocking has similaries to gtest and gmock. 
+
 ## Example Usage
 You can take a look at the automation tests under the `/Tests` directory for the most up-to-date self-documentation. But here are some test usages if you don't want to do that:
 
