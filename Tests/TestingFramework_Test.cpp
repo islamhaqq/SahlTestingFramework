@@ -44,9 +44,10 @@ TEST(TestingFramework, EXPECT_LE) {
 
 TEST(TestingFramework, EXPECT_THROW)
 {
-    vector<int> empty_vector;
+    const vector<int> empty_vector;
     EXPECT_THROW(empty_vector.at(0), std::out_of_range);
+    EXPECT_FAIL(EXPECT_THROW(empty_vector.at(0), std::invalid_argument));
 
-    vector<int> non_empty_vector{ 1, 2, 3 };
+    const vector<int> non_empty_vector{ 1, 2, 3 };
     EXPECT_FAIL(EXPECT_THROW(non_empty_vector.at(1), std::out_of_range));
 }
