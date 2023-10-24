@@ -1,5 +1,7 @@
 #include "TestingFramework.h"
 
+#include <utility>
+
 TestRegistry& TestRegistry::Instance()
 {
     static TestRegistry registry;
@@ -49,17 +51,17 @@ void TestRegistry::OutputTestResults(const size_t total, const int passed) const
     cout << "[  FAILED  ] " << failed << " test" << PluralEnding(failed) << "." << endl;
 }
 
-void TestRegistry::OutputTestPreRun(const string testName) const
+void TestRegistry::OutputTestPreRun(const string& testName) const
 {
     cout << "[  RUN  ] " << testName << endl;
 }
 
-void TestRegistry::OutputTestPostRun(const bool bPassed, const string testName) const
+void TestRegistry::OutputTestPostRun(const bool bPassed, const string& testName) const
 {
     cout << (bPassed ? "[  PASSED  ] " : "[  FAILED  ] ") << testName << endl;
 }
 
-TestBase::TestBase(const string& name): Name(name)
+TestBase::TestBase(string  name): Name(std::move(name))
 {
     TestRegistry::Instance().AddTest(this);
 }
