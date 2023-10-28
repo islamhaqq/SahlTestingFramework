@@ -62,27 +62,27 @@ private:
     TestRegistry();
     vector<ITest*> Tests_;
     
-    const char* PluralEnding(const size_t total) const;
-    void OutputTestResults(const size_t total, const int passed) const;
-    void OutputTestPreRun(const string testName) const;
-    void OutputTestPostRun(const bool bPassed, const string testName) const;
+    const char* PluralEnding(size_t total) const;
+    void OutputTestResults(size_t total, int passed) const;
+    void OutputTestPreRun(const string& testName) const;
+    void OutputTestPostRun(bool bPassed, const string& testName) const;
 };
 
 
 class TestBase : public ITest
 {
 public:
-    TestBase(const string& name);
+    explicit TestBase(string  name);
     string GetName() override;
     bool Passed() override;
-    void SetShouldLog(const bool bShouldLog);
+    void SetShouldLog(bool bShouldLog);
 
     template <typename Expression>
     void ExpectFailure(Expression expression);
 
 protected:
-    void ExpectTrue(const bool condition, const string& expression, const char* file, int line);
-    void ExpectFalse(const bool condition, const string& expression, const char* file, int line);
+    void ExpectTrue(bool condition, const string& expression, const char* file, int line);
+    void ExpectFalse(bool condition, const string& expression, const char* file, int line);
 
     template <typename T, typename U, typename EqualityComparator = std::equal_to<T>, std::enable_if_t<!std::is_same_v<EqualityComparator, void>, int> = 0>
     void ExpectEqual(T expected, U actual, const string& expression, const char* file, int line);
@@ -91,7 +91,7 @@ protected:
     void ExpectEqual(T expected, U actual, const string& expression, const char* file, int line);
 
     template <typename T>
-    void ExpectNotEqual(const T expected, const T actual, const string& expression, const char* file, int line);
+    void ExpectNotEqual(T expected, T actual, const string& expression, const char* file, int line);
 
     void ExpectStringEquals(const string& expected, const string& actual, const string& expression, const char* file, int line);
     void Fail(const char* file, int line);
