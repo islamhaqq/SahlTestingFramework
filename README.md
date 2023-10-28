@@ -29,21 +29,21 @@ class MockImplementation : public SomeInterface
     MOCK_METHOD(std::string, SomeStringMethod)
 };
 
-TEST(MyTestSuite, MyTest)
+S_TEST(MyTestSuite, MyTest)
 {
     MockImplementation mockImplementation;
     ON_CALL(mockImplementation, SomeMethod).WillByDefault([]() { return 5; });
-    EXPECT_EQ(mockImplementation.SomeMethod(), 5);
+    S_EXPECT_EQ(mockImplementation.SomeMethod(), 5);
 
     ON_CALL(mockImplementation, SomeOtherMethod).WillByDefault([]() { return 6; });
-    EXPECT_EQ(mockImplementation.SomeOtherMethod(), 6);
+    S_EXPECT_EQ(mockImplementation.SomeOtherMethod(), 6);
 
     ON_CALL(mockImplementation, SomeBoolMethod).WillByDefault([]() { return true; });
-    EXPECT_TRUE(mockImplementation.SomeBoolMethod());
+    S_EXPECT_TRUE(mockImplementation.SomeBoolMethod());
     ON_CALL(mockImplementation, SomeBoolMethod).WillByDefault([]() { return false; });
-    EXPECT_FALSE(mockImplementation.SomeBoolMethod());
+    S_EXPECT_FALSE(mockImplementation.SomeBoolMethod());
 
     ON_CALL(mockImplementation, SomeStringMethod).WillByDefault([]() { return "Hello"; });
-    EXPECT_STREQ(mockImplementation.SomeStringMethod().c_str(), "Hello");
+    S_EXPECT_STREQ(mockImplementation.SomeStringMethod().c_str(), "Hello");
 }
 ```

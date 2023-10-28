@@ -6,7 +6,7 @@
 using namespace std;
 
 
-#define TEST(TestCaseName, TestName) \
+#define S_TEST(TestCaseName, TestName) \
     class TestCaseName##_##TestName : public TestBase { \
     public: \
         TestCaseName##_##TestName() : TestBase(#TestCaseName "." #TestName) {} \
@@ -14,31 +14,31 @@ using namespace std;
     } TestCaseName##_##TestName##_instance; \
     void TestCaseName##_##TestName::Run()
 
-#define EXPECT_TRUE(condition) \
+#define S_EXPECT_TRUE(condition) \
     ExpectTrue(condition, #condition " == true", __FILE__, __LINE__)
 
-#define EXPECT_FALSE(condition) \
+#define S_EXPECT_FALSE(condition) \
     ExpectFalse(condition, #condition " == false", __FILE__, __LINE__)
 
-#define EXPECT_EQ(actual, expected) \
+#define S_EXPECT_EQ(actual, expected) \
     ExpectEqual(expected, actual, #expected " == " #actual, __FILE__, __LINE__)
 
-#define EXPECT_NE(actual, expected) \
+#define S_EXPECT_NE(actual, expected) \
     ExpectNotEqual(expected, actual, #expected " != " #actual, __FILE__, __LINE__)
 
-#define EXPECT_FAIL(expression) \
+#define S_EXPECT_FAIL(expression) \
     ExpectFailure([&]() { expression; })
 
-#define EXPECT_STREQ(actual, expected) \
+#define S_EXPECT_STREQ(actual, expected) \
     ExpectStringEquals(expected, actual, #expected " == " #actual, __FILE__, __LINE__)
 
-#define EXPECT_LE(left, right) \
+#define S_EXPECT_LE(left, right) \
     ExpectTrue(left <= right, #left " <= " #right, __FILE__, __LINE__) // TODO: Make a ExpectLE if necessary.
 
-#define EXPECT_THROW(expression, exceptionType) \
+#define S_EXPECT_THROW(expression, exceptionType) \
     ExpectThrow<exceptionType>([&]() { expression; }, #expression " throws " #exceptionType, __FILE__, __LINE__)
 
-#define FAIL() \
+#define S_FAIL() \
     Fail(__FILE__, __LINE__)
 
 class ITest

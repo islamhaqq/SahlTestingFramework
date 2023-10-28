@@ -1,53 +1,53 @@
 #include "../TestingFramework.h"
 
-TEST(TestingFramework, ExpectTrue) {
-    EXPECT_TRUE(true);
-    EXPECT_FALSE(false);
-    EXPECT_FAIL(EXPECT_TRUE(false));
+S_TEST(TestingFramework, ExpectTrue) {
+    S_EXPECT_TRUE(true);
+    S_EXPECT_FALSE(false);
+    S_EXPECT_FAIL(S_EXPECT_TRUE(false));
 }
 
-TEST(TestingFramework, ExpectFalse) {
-    EXPECT_FALSE(false);
-    EXPECT_TRUE(true);
-    EXPECT_FAIL(EXPECT_FALSE(true));
+S_TEST(TestingFramework, ExpectFalse) {
+    S_EXPECT_FALSE(false);
+    S_EXPECT_TRUE(true);
+    S_EXPECT_FAIL(S_EXPECT_FALSE(true));
 }
 
-TEST(TestingFramework, ExpectEqual) {
+S_TEST(TestingFramework, ExpectEqual) {
     int a = 5;
     int b = 5;
-    EXPECT_EQ(a, b);
-    EXPECT_FAIL(EXPECT_EQ(5, 6));
+    S_EXPECT_EQ(a, b);
+    S_EXPECT_FAIL(S_EXPECT_EQ(5, 6));
 }
 
-TEST(TestingFramework, ExpectNotEqual) {
+S_TEST(TestingFramework, ExpectNotEqual) {
     int a = 5;
     int b = 6;
-    EXPECT_NE(a, b);
-    EXPECT_FAIL(EXPECT_NE(5, 5));
+    S_EXPECT_NE(a, b);
+    S_EXPECT_FAIL(S_EXPECT_NE(5, 5));
 }
 
-TEST(TestingFramework, EXPECT_STREQ)
+S_TEST(TestingFramework, S_EXPECT_STREQ)
 {
-    EXPECT_STREQ("Hello", "Hello");
-    EXPECT_FAIL(EXPECT_STREQ("Hello", "World"));
+    S_EXPECT_STREQ("Hello", "Hello");
+    S_EXPECT_FAIL(S_EXPECT_STREQ("Hello", "World"));
 }
 
-TEST(TestingFramework, FAIL)
+S_TEST(TestingFramework, S_FAIL)
 {
-    EXPECT_FAIL(FAIL());
+    S_EXPECT_FAIL(S_FAIL());
 }
 
-TEST(TestingFramework, EXPECT_LE) {
-    EXPECT_LE(5, 10);
-    EXPECT_FAIL(EXPECT_LE(10, 5));
+S_TEST(TestingFramework, S_EXPECT_LE) {
+    S_EXPECT_LE(5, 10);
+    S_EXPECT_FAIL(S_EXPECT_LE(10, 5));
 }
 
-TEST(TestingFramework, EXPECT_THROW)
+S_TEST(TestingFramework, S_EXPECT_THROW)
 {
     const vector<int> empty_vector;
-    EXPECT_THROW(empty_vector.at(0), std::out_of_range);
-    EXPECT_FAIL(EXPECT_THROW(empty_vector.at(0), std::invalid_argument));
+    S_EXPECT_THROW(empty_vector.at(0), std::out_of_range);
+    S_EXPECT_FAIL(S_EXPECT_THROW(empty_vector.at(0), std::invalid_argument));
 
     const vector<int> non_empty_vector{ 1, 2, 3 };
-    EXPECT_FAIL(EXPECT_THROW(non_empty_vector.at(1), std::out_of_range));
+    S_EXPECT_FAIL(S_EXPECT_THROW(non_empty_vector.at(1), std::out_of_range));
 }
