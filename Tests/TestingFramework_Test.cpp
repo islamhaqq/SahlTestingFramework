@@ -44,10 +44,10 @@ S_TEST(TestingFramework, S_EXPECT_LE) {
 
 S_TEST(TestingFramework, S_EXPECT_THROW)
 {
-    const vector<int> empty_vector;
+    const std::vector<int> empty_vector;
     S_EXPECT_THROW(empty_vector.at(0), std::out_of_range);
     S_EXPECT_FAIL(S_EXPECT_THROW(empty_vector.at(0), std::invalid_argument));
 
-    const vector<int> non_empty_vector{ 1, 2, 3 };
+    const std::vector<int> non_empty_vector{ 1, 2, 3 };
     S_EXPECT_FAIL(S_EXPECT_THROW(non_empty_vector.at(1), std::out_of_range));
 }
