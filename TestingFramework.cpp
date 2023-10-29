@@ -1,6 +1,7 @@
 #include "TestingFramework.h"
 
 #include <utility>
+#include <string>
 
 TestRegistry& TestRegistry::Instance()
 {
@@ -138,4 +139,20 @@ void TestBase::FailTest(const string& expression, const char* file, int line)
 {
     OutputExceptionFailed(expression, file, line);
     FailureCount++;
+}
+
+void TestBase::AssertTrue(bool condition, const string &expression, const char *file, int line) {
+    if (!condition)
+    {
+        std::string message = "Assertion failed: (" + expression + ") in file " + file + ", line " + std::to_string(line);
+        FailTest(message, expression, file, line);
+    }
+}
+
+void TestBase::AssertFalse(bool condition, const string &expression, const char *file, int line) {
+    if (condition)
+    {
+        std::string message = "Assertion failed: (" + expression + ") in file " + file + ", line " + std::to_string(line);
+        FailTest(message, expression, file, line);
+    }
 }

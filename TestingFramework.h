@@ -17,6 +17,12 @@ using namespace std;
 #define S_EXPECT_TRUE(condition) \
     ExpectTrue(condition, #condition " == true", __FILE__, __LINE__)
 
+#define S_ASSERT_TRUE(condition) \
+    AssertTrue(condition, #condition " == true", __FILE__, __LINE__)
+
+#define S_ASSERT_FALSE(condition) \
+    AssertFalse(condition, #condition " == false", __FILE__, __LINE__)
+
 #define S_EXPECT_FALSE(condition) \
     ExpectFalse(condition, #condition " == false", __FILE__, __LINE__)
 
@@ -83,6 +89,9 @@ public:
 protected:
     void ExpectTrue(bool condition, const string& expression, const char* file, int line);
     void ExpectFalse(bool condition, const string& expression, const char* file, int line);
+
+    void AssertTrue(bool condition, const string& expression, const char* file, int line);
+    void AssertFalse(bool condition, const string& expression, const char* file, int line);
 
     template <typename T, typename U, typename EqualityComparator = std::equal_to<T>, std::enable_if_t<!std::is_same_v<EqualityComparator, void>, int> = 0>
     void ExpectEqual(T expected, U actual, const string& expression, const char* file, int line);
