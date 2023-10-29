@@ -38,3 +38,28 @@ S_TEST(TestingTools, MouseClick)
 }
 
 #endif // _WIN32
+
+#ifdef __linux__
+
+S_TEST(TestingTools, MouseClick)
+{
+    int fd;
+    createVirtualMouse(fd);
+
+    sleep(1);
+
+    // Move mouse 100 units on X axis
+    sendEvent(fd, EV_REL, REL_X, 100);
+    sendEvent(fd, EV_SYN, SYN_REPORT, 0);
+
+    // Click left mouse button
+    sendEvent(fd, EV_KEY, BTN_LEFT, 1);
+    sendEvent(fd, EV_SYN, SYN_REPORT, 0);
+    sendEvent(fd, EV_KEY, BTN_LEFT, 0);
+    sendEvent(fd, EV_SYN, SYN_REPORT, 0);
+
+    ioctl(fd, UI_DEV_DESTROY);
+    close(fd);
+}
+
+#endif // __linux__
