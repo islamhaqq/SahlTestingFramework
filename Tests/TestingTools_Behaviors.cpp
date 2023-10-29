@@ -41,25 +41,61 @@ S_TEST(TestingTools, MouseClick)
 
 #ifdef __linux__
 
-S_TEST(TestingTools, MouseClick)
+#include <stdio.h>
+#include <X11/Xlib.h>
+
+S_TEST(TestingTools, ShouldVisiblyMoveMouse)
 {
-    int fd;
-    createVirtualMouse(fd);
+    // Given the original mouse position
+    Display* x11Display = XOpenDisplay(NULL);
+    Window rootWindow = DefaultRootWindow(x11Display);
+    Window rootWindowUnderMouse;
+    Window childWindowUnderMouse;
+    unsigned int bitMaskForModifierKeys;
 
-    sleep(1);
+    int originalMouseX;
+    int originalMouseY;
+    int mouseXUnderChildWindow;
+    int mouseYUnderChildWindow;
+    XQueryPointer(
+            x11Display,
+            rootWindow,
+            &rootWindowUnderMouse,
+            &childWindowUnderMouse,
+            &originalMouseX,
+            &originalMouseY,
+            &mouseXUnderChildWindow,
+            &mouseYUnderChildWindow,
+            &bitMaskForModifierKeys
+    );
 
-    // Move mouse 100 units on X axis
-    sendEvent(fd, EV_REL, REL_X, 100);
-    sendEvent(fd, EV_SYN, SYN_REPORT, 0);
 
-    // Click left mouse button
-    sendEvent(fd, EV_KEY, BTN_LEFT, 1);
-    sendEvent(fd, EV_SYN, SYN_REPORT, 0);
-    sendEvent(fd, EV_KEY, BTN_LEFT, 0);
-    sendEvent(fd, EV_SYN, SYN_REPORT, 0);
+    // When I call MoveMouseTo()
+    MoveMouseTo();
 
-    ioctl(fd, UI_DEV_DESTROY);
-    close(fd);
+    // Then the mouse should not be in its original position
+    int newMouseX;
+    int newMouseY;
+    int newMouseXUnderChildWindow;
+    int newMouseYUnderChildWindow;
+    XQueryPointer(
+            x11Display,
+            rootWindow,
+            &rootWindowUnderMouse,
+            &childWindowUnderMouse,
+            &newMouseX,
+            &newMouseY,
+            &newMouseXUnderChildWindow,
+            &newMouseYUnderChildWindow,
+            &bitMaskForModifierKeys
+    );
+    S_EXPECT_NE(originalMouseX, newMouseX);
+    XCloseDisplay(x11Display);
 }
+//
+//S_TEST(TestingTools, MouseClick)
+//{
+//
+//}
 
 #endif // __linux__
