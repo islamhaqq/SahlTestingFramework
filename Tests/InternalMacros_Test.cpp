@@ -1,5 +1,5 @@
-#include "../InternalMacros.h"
-#include "../TestingFramework.h"
+#include "InternalMacros.h"
+#include "TestingFramework.h"
 
 
 // S_TEST(COUNT_ARGS, ReturnsNumberOfArguments)

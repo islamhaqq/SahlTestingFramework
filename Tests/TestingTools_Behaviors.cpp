@@ -1,5 +1,5 @@
-#include "../TestingFramework.h"
-#include "../TestingTools.h"
+#include "TestingFramework.h"
+#include "TestingTools.h"
 
 #ifdef _WIN32
 
@@ -38,6 +38,3 @@ S_TEST(TestingTools, MouseClick)
 }
 
 #endif // _WIN32
-
-#ifdef __linux__
-#endif // __linux__

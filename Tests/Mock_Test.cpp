@@ -1,5 +1,5 @@
-#include "../TestingFramework.h"
-#include "../Mock.h"
+#include "TestingFramework.h"
+#include "Mock.h"
 
 class SomeInterface
 {
