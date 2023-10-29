@@ -41,61 +41,17 @@ S_TEST(TestingTools, MouseClick)
 
 #ifdef __linux__
 
-#include <stdio.h>
-#include <X11/Xlib.h>
-
 S_TEST(TestingTools, ShouldVisiblyMoveMouse)
 {
-    // Given the original mouse position
-    Display* x11Display = XOpenDisplay(NULL);
-    Window rootWindow = DefaultRootWindow(x11Display);
-    Window rootWindowUnderMouse;
-    Window childWindowUnderMouse;
-    unsigned int bitMaskForModifierKeys;
+    // Given a call to MoveMouseTo(2500, 1000) with the destination being X: 2500, Y: 1000
+    MoveMouseTo(2500, 1000);
 
-    int originalMouseX;
-    int originalMouseY;
-    int mouseXUnderChildWindow;
-    int mouseYUnderChildWindow;
-    XQueryPointer(
-            x11Display,
-            rootWindow,
-            &rootWindowUnderMouse,
-            &childWindowUnderMouse,
-            &originalMouseX,
-            &originalMouseY,
-            &mouseXUnderChildWindow,
-            &mouseYUnderChildWindow,
-            &bitMaskForModifierKeys
-    );
+    // When I get the mouse position
+    CursorProperties cursorProperties = GetCursorPosition();
 
-
-    // When I call MoveMouseTo()
-    MoveMouseTo();
-
-    // Then the mouse should not be in its original position
-    int newMouseX;
-    int newMouseY;
-    int newMouseXUnderChildWindow;
-    int newMouseYUnderChildWindow;
-    XQueryPointer(
-            x11Display,
-            rootWindow,
-            &rootWindowUnderMouse,
-            &childWindowUnderMouse,
-            &newMouseX,
-            &newMouseY,
-            &newMouseXUnderChildWindow,
-            &newMouseYUnderChildWindow,
-            &bitMaskForModifierKeys
-    );
-    S_EXPECT_NE(originalMouseX, newMouseX);
-    XCloseDisplay(x11Display);
+    // Then the mouse should be at (2500, 1000)
+    S_EXPECT_EQ(cursorProperties.x, 2500);
+    S_EXPECT_EQ(cursorProperties.y, 1000);
 }
-//
-//S_TEST(TestingTools, MouseClick)
-//{
-//
-//}
 
 #endif // __linux__

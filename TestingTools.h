@@ -22,11 +22,48 @@ namespace TestingTools {
 
 #include <X11/Xlib.h>
 
-void MoveMouseTo()
+struct CursorProperties
 {
-    Display* x11Display = XOpenDisplay(NULL);
+    int x;
+    int y;
+};
+
+CursorProperties GetCursorPosition()
+{
+    Display* x11Display = XOpenDisplay(nullptr);
     Window rootWindow = DefaultRootWindow(x11Display);
-    XWarpPointer(x11Display, None, None, 0, 0, 0, 0, 10, 0);
+
+    Window rootWindowUnderMouse;
+    Window childWindowUnderMouse;
+    int newMouseXUnderChildWindow;
+    int newMouseYUnderChildWindow;
+
+    unsigned int bitMaskForModifierKeys;
+
+    CursorProperties cursorProperties{};
+
+    XQueryPointer(
+            x11Display,
+            rootWindow,
+            &rootWindowUnderMouse,
+            &childWindowUnderMouse,
+            &cursorProperties.x,
+            &cursorProperties.y,
+            &newMouseXUnderChildWindow,
+            &newMouseYUnderChildWindow,
+            &bitMaskForModifierKeys
+    );
+
+    XCloseDisplay(x11Display);
+
+    return cursorProperties;
+}
+
+void MoveMouseTo(int x, int y)
+{
+    Display* x11Display = XOpenDisplay(nullptr);
+    Window rootWindow = DefaultRootWindow(x11Display);
+    XWarpPointer(x11Display, None, rootWindow, 0, 0, 0, 0, x, y);
 
     // Flush the output buffer and ensure move is applied.
     XFlush(x11Display);
