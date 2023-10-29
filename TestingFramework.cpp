@@ -20,7 +20,7 @@ void TestRegistry::RunAllTests() const
     int passed = 0;
     for (const auto& test : Tests_)
     {
-        const string testName = test->GetName();
+        const std::string testName = test->GetName();
         OutputTestPreRun(testName);
             
         test->Run();
@@ -47,27 +47,27 @@ void TestRegistry::OutputTestResults(const size_t total, const int passed) const
 {
     const int failed = total - passed;
 
-    cout << endl << "[==========] " << total << " test" << PluralEnding(total) << " ran." << endl;
-    cout << "[  PASSED  ] " << passed << " test" << PluralEnding(passed) << "." << endl;
-    cout << "[  FAILED  ] " << failed << " test" << PluralEnding(failed) << "." << endl;
+    std::cout << std::endl << "[==========] " << total << " test" << PluralEnding(total) << " ran." << std::endl;
+    std::cout << "[  PASSED  ] " << passed << " test" << PluralEnding(passed) << "." << std::endl;
+    std::cout << "[  FAILED  ] " << failed << " test" << PluralEnding(failed) << "." << std::endl;
 }
 
-void TestRegistry::OutputTestPreRun(const string& testName) const
+void TestRegistry::OutputTestPreRun(const std::string& testName) const
 {
-    cout << "[  RUN  ] " << testName << endl;
+    std::cout << "[  RUN  ] " << testName << std::endl;
 }
 
-void TestRegistry::OutputTestPostRun(const bool bPassed, const string& testName) const
+void TestRegistry::OutputTestPostRun(const bool bPassed, const std::string& testName) const
 {
-    cout << (bPassed ? "[  PASSED  ] " : "[  FAILED  ] ") << testName << endl;
+    std::cout << (bPassed ? "[  PASSED  ] " : "[  FAILED  ] ") << testName << std::endl;
 }
 
-TestBase::TestBase(string  name): Name(std::move(name))
+TestBase::TestBase(std::string  name): Name(std::move(name))
 {
     TestRegistry::Instance().AddTest(this);
 }
 
-string TestBase::GetName()
+std::string TestBase::GetName()
 {
     return Name;
 }
@@ -82,7 +82,7 @@ void TestBase::SetShouldLog(const bool bShouldLog)
     this->bShouldLog = bShouldLog;
 }
 
-void TestBase::ExpectTrue(const bool condition, const string& expression, const char* file, int line)
+void TestBase::ExpectTrue(const bool condition, const std::string& expression, const char* file, int line)
 {
     if (!condition)
     {
@@ -90,7 +90,7 @@ void TestBase::ExpectTrue(const bool condition, const string& expression, const 
     }
 }
 
-void TestBase::ExpectFalse(const bool condition, const string& expression, const char* file, int line)
+void TestBase::ExpectFalse(const bool condition, const std::string& expression, const char* file, int line)
 {
     if (condition)
     {
@@ -98,7 +98,7 @@ void TestBase::ExpectFalse(const bool condition, const string& expression, const
     }
 }
 
-void TestBase::ExpectStringEquals(const string& expected, const string& actual, const string& expression, const char* file, int line)
+void TestBase::ExpectStringEquals(const std::string& expected, const std::string& actual, const std::string& expression, const char* file, int line)
 {
     if (expected != actual)
     {
@@ -106,7 +106,7 @@ void TestBase::ExpectStringEquals(const string& expected, const string& actual, 
         // TODO: Refactor.
         if (bShouldLog)
         {
-            cerr << "Expected: " << expected << " but got " << actual << endl;
+            std::cerr << "Expected: " << expected << " but got " << actual << std::endl;
         }
         FailureCount++;
     }
@@ -117,31 +117,31 @@ void TestBase::Fail(const char* file, int line)
     FailTest("Fail()", file, line);
 }
 
-void TestBase::OutputExceptionFailed(const string& expression, const char* file, int line) const
+void TestBase::OutputExceptionFailed(const std::string& expression, const char* file, int line) const
 {
     if (bShouldLog)
     {
-        cerr << file << ":" << line << ": Failure: expected " << expression << endl;
+        std::cerr << file << ":" << line << ": Failure: expected " << expression << std::endl;
     }
 }
 
-void TestBase::FailTest(const string& failureMessage, const string& expression, const char* file, int line)
+void TestBase::FailTest(const std::string& failureMessage, const std::string& expression, const char* file, int line)
 {
     // TODO: Refactor - combine or do something with OutputExceptionFailed.
     if(bShouldLog)
     {
-        cerr << file << ":" << line << ": Failure: " << failureMessage << endl;
+        std::cerr << file << ":" << line << ": Failure: " << failureMessage << std::endl;
     }
     FailTest(expression, file, line);
 }
 
-void TestBase::FailTest(const string& expression, const char* file, int line)
+void TestBase::FailTest(const std::string& expression, const char* file, int line)
 {
     OutputExceptionFailed(expression, file, line);
     FailureCount++;
 }
 
-void TestBase::AssertTrue(bool condition, const string &expression, const char *file, int line) {
+void TestBase::AssertTrue(bool condition, const std::string &expression, const char *file, int line) {
     if (!condition)
     {
         std::string message = "Assertion failed: (" + expression + ") in file " + file + ", line " + std::to_string(line);
@@ -149,7 +149,7 @@ void TestBase::AssertTrue(bool condition, const string &expression, const char *
     }
 }
 
-void TestBase::AssertFalse(bool condition, const string &expression, const char *file, int line) {
+void TestBase::AssertFalse(bool condition, const std::string &expression, const char *file, int line) {
     if (condition)
     {
         std::string message = "Assertion failed: (" + expression + ") in file " + file + ", line " + std::to_string(line);
