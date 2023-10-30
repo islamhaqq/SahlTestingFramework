@@ -77,7 +77,7 @@ S_TEST(TestingTools, MouseClick)
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // Then the app window should be closed
-    S_EXPECT_EQ(TestingTools::FindWindowByName(x11Display, root, "Untitled Document 1 - gedit"), 0);
+    S_EXPECT_EQ(TestingTools::FindWindowByName(x11Display, root, "Mozilla Firefox"), 0);
 }
 
 #endif // __linux__
