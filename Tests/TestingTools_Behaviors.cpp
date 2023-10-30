@@ -56,11 +56,9 @@ S_TEST(TestingTools, MouseClick)
     Window appWindow = TestingTools::FindWindowByName(x11Display, root, "Mozilla Firefox");
     if (appWindow == 0) S_FAIL();
     XRRCrtcInfo primaryMonitorCrtcInfo = TestingTools::GetPrimaryMonitor(x11Display);
-    TestingTools::MoveWindowToTopRight(x11Display, appWindow, primaryMonitorCrtcInfo);
 
     // When I use testing tools to click in the top right corner of my screen
-    XWarpPointer(x11Display, None, root, 0, 0, 0, 0, primaryMonitorCrtcInfo.x + primaryMonitorCrtcInfo.width - 50, primaryMonitorCrtcInfo.y + 50);
-    TestingTools::MouseClick(x11Display);
+    TestingTools::MouseClick(primaryMonitorCrtcInfo.x + primaryMonitorCrtcInfo.width - 50, primaryMonitorCrtcInfo.y + 50);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // Then the app window should be closed

@@ -144,7 +144,12 @@ namespace TestingTools {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
-    void MouseClick(Display *x11Display) {
+    void MouseClick(int x, int y)
+    {
+        Display *x11Display = XOpenDisplay(nullptr);
+        Window rootWindow = DefaultRootWindow(x11Display);
+        XWarpPointer(x11Display, None, rootWindow, 0, 0, 0, 0, x, y);
+
         XTestFakeButtonEvent(x11Display, 1, True, 0);
         XTestFakeButtonEvent(x11Display, 1, False, 0);
         XFlush(x11Display);
