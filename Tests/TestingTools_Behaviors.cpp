@@ -18,7 +18,7 @@ S_TEST(TestingTools, MouseClick)
     // When I use testing tools to click at the top right
     RECT rect;
     GetWindowRect(windowHandle, &rect);
-    TestingTools::MouseClick(TestingTools::MouseButtons::Left, rect.right - 20, rect.top + 20);
+    TestingTools::MouseClick(rect.right - 20, rect.top + 20);
     Sleep(1000); // Wait to make sure Notepad is closed
 
     // Then it should be closed

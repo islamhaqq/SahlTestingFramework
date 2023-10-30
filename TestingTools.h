@@ -4,11 +4,7 @@
 #include <Windows.h>
 
 namespace TestingTools {
-    enum class MouseButtons {
-        Left
-    };
-
-    void MouseClick(MouseButtons button, int x, int y) {
+    void MouseClick(int x, int y) {
         SetCursorPos(x, y);
 
         mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
