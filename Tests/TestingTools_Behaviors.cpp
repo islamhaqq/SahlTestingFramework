@@ -1,4 +1,3 @@
-#include <csignal>
 #include "TestingFramework.h"
 #include "TestingTools.h"
 
