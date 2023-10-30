@@ -145,14 +145,11 @@ void MoveWindowToTopRightCorner(Display* display, Window window, XRRCrtcInfo tar
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
-void MouseClick()
+void MouseClick(Display* x11Display)
 {
-    Display* x11Display = XOpenDisplay(nullptr);
     XTestFakeButtonEvent(x11Display, 1, True, 0);
     XTestFakeButtonEvent(x11Display, 1, False, 0);
     XFlush(x11Display);
-    XCloseDisplay(x11Display);
 }
-
 
 #endif // __linux__
