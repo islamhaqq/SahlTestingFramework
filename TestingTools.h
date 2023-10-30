@@ -131,19 +131,6 @@ namespace TestingTools {
         return primaryMonitorCrtcInfo;
     }
 
-    void MoveWindowToTopRight(Display *display, Window window, XRRCrtcInfo targetMonitor) {
-        int monitorXOrigin = targetMonitor.x;
-        int monitorYOrigin = targetMonitor.y;
-        unsigned int monitorWidth = targetMonitor.width;
-
-        XWindowAttributes windowAttributes;
-        XGetWindowAttributes(display, window, &windowAttributes);
-
-        XMoveWindow(display, window, monitorXOrigin + monitorWidth - windowAttributes.width, monitorYOrigin);
-        XFlush(display);
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-
     void MouseClick(int x, int y)
     {
         Display *x11Display = XOpenDisplay(nullptr);
