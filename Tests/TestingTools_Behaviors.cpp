@@ -1,3 +1,4 @@
+#include <csignal>
 #include "TestingFramework.h"
 #include "TestingTools.h"
 
@@ -41,6 +42,11 @@ S_TEST(TestingTools, MouseClick)
 
 #ifdef __linux__
 
+#include <X11/extensions/Xrandr.h>
+#include <X11/extensions/XTest.h>
+#include <chrono>
+#include <thread>
+
 S_TEST(TestingTools, ShouldVisiblyMoveMouse)
 {
     // Given a call to MoveMouseTo(2500, 1000) with the destination being X: 2500, Y: 1000
@@ -52,6 +58,43 @@ S_TEST(TestingTools, ShouldVisiblyMoveMouse)
     // Then the mouse should be at (2500, 1000)
     S_EXPECT_EQ(cursorProperties.x, 2500);
     S_EXPECT_EQ(cursorProperties.y, 1000);
+}
+
+S_TEST(TestingTools, MouseClick)
+{
+    // Given an app opened to the top right-corner
+    system("gedit &");
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    Display* x11Display = XOpenDisplay(nullptr);
+    Window root = DefaultRootWindow(x11Display);
+    Window appWindow = FindWindowByName(x11Display, root, "Untitled Document 1 - gedit");
+
+    if (appWindow == 0) S_FAIL();
+
+    XRRCrtcInfo primaryMonitorCrtcInfo = GetPrimaryMonitor(x11Display);
+
+    int primaryMonitorXOrigin = primaryMonitorCrtcInfo.x;
+    int primaryMonitorYOrigin = primaryMonitorCrtcInfo.y;
+    unsigned int primaryMonitorWidth = primaryMonitorCrtcInfo.width;
+
+    XWindowAttributes windowAttributes;
+    XGetWindowAttributes(x11Display, appWindow, &windowAttributes);
+
+    XMoveWindow(x11Display, appWindow, primaryMonitorXOrigin + primaryMonitorWidth - windowAttributes.width, primaryMonitorYOrigin);
+    XFlush(x11Display);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+
+    // When I use testing tools to click in the top right corner of my screen
+    XWarpPointer(x11Display, None, root, 0, 0, 0, 0, primaryMonitorXOrigin + primaryMonitorWidth - 50, primaryMonitorYOrigin + 50);
+    XTestFakeButtonEvent(x11Display, 1, True, 0);
+    XTestFakeButtonEvent(x11Display, 1, False, 0);
+    XFlush(x11Display);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    // Then the app window should be closed
+    S_EXPECT_EQ(FindWindowByName(x11Display, root, "Untitled Document 1 - gedit"), 0);
 }
 
 #endif // __linux__
