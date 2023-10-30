@@ -1,3 +1,4 @@
+#include <csignal>
 #include "TestingFramework.h"
 #include "TestingTools.h"
 
@@ -38,3 +39,44 @@ S_TEST(TestingTools, MouseClick)
 }
 
 #endif // _WIN32
+
+#ifdef __linux__
+
+#include <chrono>
+#include <thread>
+
+S_TEST(TestingTools, ShouldVisiblyMoveMouse)
+{
+    // Given a call to MoveMouseTo(2500, 1000) with the destination being X: 2500, Y: 1000
+    TestingTools::MoveMouseTo(2500, 1000);
+
+    // When I get the mouse position
+    TestingTools::CursorProperties cursorProperties = TestingTools::GetCursorPosition();
+
+    // Then the mouse should be at (2500, 1000)
+    S_EXPECT_EQ(cursorProperties.x, 2500);
+    S_EXPECT_EQ(cursorProperties.y, 1000);
+}
+
+S_TEST(TestingTools, MouseClick)
+{
+    // Given an app opened to the top right-corner
+    system("gedit &");
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    Display* x11Display = XOpenDisplay(nullptr);
+    Window root = DefaultRootWindow(x11Display);
+    Window appWindow = TestingTools::FindWindowByName(x11Display, root, "Untitled Document 1 - gedit");
+    if (appWindow == 0) S_FAIL();
+    XRRCrtcInfo primaryMonitorCrtcInfo = TestingTools::GetPrimaryMonitor(x11Display);
+    TestingTools::MoveWindowToTopRight(x11Display, appWindow, primaryMonitorCrtcInfo);
+
+    // When I use testing tools to click in the top right corner of my screen
+    XWarpPointer(x11Display, None, root, 0, 0, 0, 0, primaryMonitorCrtcInfo.x + primaryMonitorCrtcInfo.width - 50, primaryMonitorCrtcInfo.y + 50);
+    TestingTools::MouseClick(x11Display);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    // Then the app window should be closed
+    S_EXPECT_EQ(TestingTools::FindWindowByName(x11Display, root, "Untitled Document 1 - gedit"), 0);
+}
+
+#endif // __linux__

@@ -161,6 +161,7 @@ void TestBase::ExpectNotEqual(const T expected, const T actual, const std::strin
 {
     if (expected == actual)
     {
+        // @TODO: Do TDD for the text output. Should be "Expected myVar (2341) to not equal otherVar (2341)".
         FailTest(expression, file, line);
     }
 }
