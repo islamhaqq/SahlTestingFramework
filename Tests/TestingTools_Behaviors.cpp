@@ -22,9 +22,9 @@ void MoveWindowToTopRight(HWND hWnd)
 S_TEST(TestingTools, MouseClick)
 {
     // Given an app opened to the top right-corner
-    system("start notepad.exe");
+    system("start wordpad.exe");
     Sleep(1000); // Wait to make sure Notepad is open
-    HWND windowHandle = FindWindow(NULL, "Untitled - Notepad");
+    HWND windowHandle = FindWindow(NULL, "Document - Wordpad");
     S_ASSERT_TRUE(IsWindow(windowHandle));
     MoveWindowToTopRight(windowHandle);
 
