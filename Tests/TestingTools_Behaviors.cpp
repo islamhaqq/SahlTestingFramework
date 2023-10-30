@@ -8,18 +8,17 @@
 
 S_TEST(TestingTools, MouseClick)
 {
-    // Given an app opened to the top right-corner
+    // Given an app opened
     system("start wordpad.exe");
     Sleep(1000); // Wait to make sure Notepad is open
     HWND windowHandle = FindWindow(NULL, "Document - Wordpad");
     S_ASSERT_TRUE(IsWindow(windowHandle));
-    MoveWindowToTopRight(windowHandle);
 
-    // When I use testing tools to click at the top right
+    // When I use MouseClick to click in the window's "X" (close) button
     RECT rect;
     GetWindowRect(windowHandle, &rect);
     TestingTools::MouseClick(rect.right - 20, rect.top + 20);
-    Sleep(1000); // Wait to make sure Notepad is closed
+    Sleep(1000);
 
     // Then it should be closed
     S_ASSERT_FALSE(IsWindow(windowHandle));
