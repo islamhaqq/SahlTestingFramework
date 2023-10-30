@@ -47,3 +47,26 @@ S_TEST(MyTestSuite, MyTest)
     S_EXPECT_STREQ(mockImplementation.SomeStringMethod().c_str(), "Hello");
 }
 ```
+
+# Installation
+
+You will need to following dependencies:
+* [CMake](https://cmake.org/download/)
+* [GCC/G++ (Linux)](https://gcc.gnu.org/install/)
+* [MSVC (Windows)](https://visualstudio.microsoft.com/downloads/)
+* [xlib w/ XRandR and XTest (Linux)](https://www.x.org/wiki/)
+
+
+## Linux
+```bash
+sudo apt-get install libxrandr-dev
+sudo apt-get install libxtst-dev
+
+cd TestingFramework
+cmake -B build
+cmake --build build
+
+# Run tests to make sure everything is working
+cd build
+ctest --extra-verbose
+```
