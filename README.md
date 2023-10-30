@@ -62,7 +62,7 @@ You will need to following dependencies:
 sudo apt-get install libxrandr-dev
 sudo apt-get install libxtst-dev
 
-cd TestingFramework
+cd SahlTestingFramework
 cmake -B build
 cmake --build build
 
