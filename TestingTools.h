@@ -29,127 +29,117 @@ namespace TestingTools {
 #include <chrono>
 #include <thread>
 
-struct CursorProperties
-{
-    int x;
-    int y;
-};
+namespace TestingTools {
+    struct CursorProperties {
+        int x;
+        int y;
+    };
 
-CursorProperties GetCursorPosition()
-{
-    Display* x11Display = XOpenDisplay(nullptr);
-    Window rootWindow = DefaultRootWindow(x11Display);
+    CursorProperties GetCursorPosition() {
+        Display *x11Display = XOpenDisplay(nullptr);
+        Window rootWindow = DefaultRootWindow(x11Display);
 
-    Window rootWindowUnderMouse;
-    Window childWindowUnderMouse;
-    int newMouseXUnderChildWindow;
-    int newMouseYUnderChildWindow;
+        Window rootWindowUnderMouse;
+        Window childWindowUnderMouse;
+        int newMouseXUnderChildWindow;
+        int newMouseYUnderChildWindow;
 
-    unsigned int bitMaskForModifierKeys;
+        unsigned int bitMaskForModifierKeys;
 
-    CursorProperties cursorProperties{};
+        CursorProperties cursorProperties{};
 
-    XQueryPointer(
-            x11Display,
-            rootWindow,
-            &rootWindowUnderMouse,
-            &childWindowUnderMouse,
-            &cursorProperties.x,
-            &cursorProperties.y,
-            &newMouseXUnderChildWindow,
-            &newMouseYUnderChildWindow,
-            &bitMaskForModifierKeys
-    );
+        XQueryPointer(
+                x11Display,
+                rootWindow,
+                &rootWindowUnderMouse,
+                &childWindowUnderMouse,
+                &cursorProperties.x,
+                &cursorProperties.y,
+                &newMouseXUnderChildWindow,
+                &newMouseYUnderChildWindow,
+                &bitMaskForModifierKeys
+        );
 
-    XCloseDisplay(x11Display);
+        XCloseDisplay(x11Display);
 
-    return cursorProperties;
-}
-
-void MoveMouseTo(int x, int y)
-{
-    Display* x11Display = XOpenDisplay(nullptr);
-    Window rootWindow = DefaultRootWindow(x11Display);
-    XWarpPointer(x11Display, None, rootWindow, 0, 0, 0, 0, x, y);
-
-    // Flush the output buffer and ensure move is applied.
-    XFlush(x11Display);
-    XCloseDisplay(x11Display);
-}
-
-Window FindWindowByName(Display* display, Window root, const char* name)
-{
-    Window parent;
-    Window* children;
-    unsigned int numberOfChildren;
-    char* windowName;
-
-    bool baseCase = XFetchName(display, root, &windowName) && strcmp(name, windowName) == 0;
-    if (baseCase) return root;
-
-    if (XQueryTree(display, root, &root, &parent, &children, &numberOfChildren))
-    {
-        for (unsigned int i = 0; i < numberOfChildren; i++)
-        {
-            Window result = FindWindowByName(display, children[i], name);
-            if (result != None) return result;
-        }
-        XFree(children);
+        return cursorProperties;
     }
 
-    return 0;
-}
+    void MoveMouseTo(int x, int y) {
+        Display *x11Display = XOpenDisplay(nullptr);
+        Window rootWindow = DefaultRootWindow(x11Display);
+        XWarpPointer(x11Display, None, rootWindow, 0, 0, 0, 0, x, y);
 
-XRRCrtcInfo GetPrimaryMonitor(Display* display)
-{
-    Window root = DefaultRootWindow(display);
+        // Flush the output buffer and ensure move is applied.
+        XFlush(x11Display);
+        XCloseDisplay(x11Display);
+    }
 
-    XRRScreenResources *screenResources = XRRGetScreenResources(display, root);
-    RROutput primaryOutput = XRRGetOutputPrimary(display, root);
-    XRROutputInfo *outputInfo = XRRGetOutputInfo(display, screenResources, primaryOutput);
+    Window FindWindowByName(Display *display, Window root, const char *name) {
+        Window parent;
+        Window *children;
+        unsigned int numberOfChildren;
+        char *windowName;
 
-    XRRCrtcInfo primaryMonitorCrtcInfo{};
+        bool baseCase = XFetchName(display, root, &windowName) && strcmp(name, windowName) == 0;
+        if (baseCase) return root;
 
-    for (int i = 0; i < screenResources->ncrtc; ++i)
-    {
-        XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(display, screenResources, screenResources->crtcs[i]);
-
-        for (int j = 0; j < crtcInfo->noutput; ++j)
-        {
-            if (crtcInfo->outputs[j] == primaryOutput)
-            {
-                primaryMonitorCrtcInfo = *crtcInfo;
-                break;
+        if (XQueryTree(display, root, &root, &parent, &children, &numberOfChildren)) {
+            for (unsigned int i = 0; i < numberOfChildren; i++) {
+                Window result = FindWindowByName(display, children[i], name);
+                if (result != None) return result;
             }
+            XFree(children);
         }
-        XRRFreeCrtcInfo(crtcInfo);
+
+        return 0;
     }
 
-    XRRFreeOutputInfo(outputInfo);
-    XRRFreeScreenResources(screenResources);
+    XRRCrtcInfo GetPrimaryMonitor(Display *display) {
+        Window root = DefaultRootWindow(display);
 
-    return primaryMonitorCrtcInfo;
-}
+        XRRScreenResources *screenResources = XRRGetScreenResources(display, root);
+        RROutput primaryOutput = XRRGetOutputPrimary(display, root);
+        XRROutputInfo *outputInfo = XRRGetOutputInfo(display, screenResources, primaryOutput);
 
-void MoveWindowToTopRightCorner(Display* display, Window window, XRRCrtcInfo targetMonitor)
-{
-    int monitorXOrigin = targetMonitor.x;
-    int monitorYOrigin = targetMonitor.y;
-    unsigned int monitorWidth = targetMonitor.width;
+        XRRCrtcInfo primaryMonitorCrtcInfo{};
 
-    XWindowAttributes windowAttributes;
-    XGetWindowAttributes(display, window, &windowAttributes);
+        for (int i = 0; i < screenResources->ncrtc; ++i) {
+            XRRCrtcInfo *crtcInfo = XRRGetCrtcInfo(display, screenResources, screenResources->crtcs[i]);
 
-    XMoveWindow(display, window, monitorXOrigin + monitorWidth - windowAttributes.width, monitorYOrigin);
-    XFlush(display);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-}
+            for (int j = 0; j < crtcInfo->noutput; ++j) {
+                if (crtcInfo->outputs[j] == primaryOutput) {
+                    primaryMonitorCrtcInfo = *crtcInfo;
+                    break;
+                }
+            }
+            XRRFreeCrtcInfo(crtcInfo);
+        }
 
-void MouseClick(Display* x11Display)
-{
-    XTestFakeButtonEvent(x11Display, 1, True, 0);
-    XTestFakeButtonEvent(x11Display, 1, False, 0);
-    XFlush(x11Display);
+        XRRFreeOutputInfo(outputInfo);
+        XRRFreeScreenResources(screenResources);
+
+        return primaryMonitorCrtcInfo;
+    }
+
+    void MoveWindowToTopRight(Display *display, Window window, XRRCrtcInfo targetMonitor) {
+        int monitorXOrigin = targetMonitor.x;
+        int monitorYOrigin = targetMonitor.y;
+        unsigned int monitorWidth = targetMonitor.width;
+
+        XWindowAttributes windowAttributes;
+        XGetWindowAttributes(display, window, &windowAttributes);
+
+        XMoveWindow(display, window, monitorXOrigin + monitorWidth - windowAttributes.width, monitorYOrigin);
+        XFlush(display);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    void MouseClick(Display *x11Display) {
+        XTestFakeButtonEvent(x11Display, 1, True, 0);
+        XTestFakeButtonEvent(x11Display, 1, False, 0);
+        XFlush(x11Display);
+    }
 }
 
 #endif // __linux__
