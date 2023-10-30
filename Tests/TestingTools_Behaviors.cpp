@@ -32,10 +32,10 @@ S_TEST(TestingTools, MouseClick)
 #include <chrono>
 #include <thread>
 
-S_TEST(TestingTools, ShouldVisiblyMoveMouse)
+S_TEST(TestingTools, MouseClickShouldVisiblyMoveMouse)
 {
     // Given a call to MoveMouseTo(800, 400) with the destination being X: 2500, Y: 1000
-    TestingTools::MoveMouseTo(800, 400);
+    TestingTools::MouseClick(800, 400);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // When I get the mouse position
@@ -46,7 +46,7 @@ S_TEST(TestingTools, ShouldVisiblyMoveMouse)
     S_EXPECT_EQ(cursorProperties.y, 400);
 }
 
-S_TEST(TestingTools, MouseClick)
+S_TEST(TestingTools, MouseClickCanCloseWindow)
 {
     // Given an app opened to the top right-corner
     system("firefox &");

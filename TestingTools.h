@@ -74,16 +74,6 @@ namespace TestingTools {
         return cursorProperties;
     }
 
-    void MoveMouseTo(int x, int y) {
-        Display *x11Display = XOpenDisplay(nullptr);
-        Window rootWindow = DefaultRootWindow(x11Display);
-        XWarpPointer(x11Display, None, rootWindow, 0, 0, 0, 0, x, y);
-
-        // Flush the output buffer and ensure move is applied.
-        XFlush(x11Display);
-        XCloseDisplay(x11Display);
-    }
-
     Window FindWindowByName(Display *display, Window root, const char *name) {
         Window parent;
         Window *children;
