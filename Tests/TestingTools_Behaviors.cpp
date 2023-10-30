@@ -6,19 +6,6 @@
 
 #include <Windows.h>
 
-void MoveWindowToTopRight(HWND hWnd)
-{
-    RECT windowRectangle;
-    GetWindowRect(hWnd, &windowRectangle);
-
-    int windowWidth = windowRectangle.right - windowRectangle.left;
-    int windowHeight = windowRectangle.bottom - windowRectangle.top;
-
-    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-
-    MoveWindow(hWnd, screenWidth - windowWidth, 0, windowWidth, windowHeight, TRUE);
-}
-
 S_TEST(TestingTools, MouseClick)
 {
     // Given an app opened to the top right-corner
