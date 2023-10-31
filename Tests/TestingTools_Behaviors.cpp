@@ -54,6 +54,7 @@ S_TEST(TestingTools, MouseClickCanCloseWindow)
     Window appWindow = TestingTools::FindWindowByName(x11Display, root, "Mozilla Firefox");
     if (appWindow == 0) S_FAIL();
     XRRCrtcInfo primaryMonitorCrtcInfo = TestingTools::GetPrimaryMonitor(x11Display);
+    TestingTools::MoveWindowToTopRight(x11Display, appWindow, primaryMonitorCrtcInfo);
 
     // When I use testing tools to click in the top right corner of my screen
     TestingTools::MouseClick(primaryMonitorCrtcInfo.x + primaryMonitorCrtcInfo.width - 50, primaryMonitorCrtcInfo.y + 50);
