@@ -2,20 +2,9 @@
 
 
 #include <Windows.h>
-#include <chrono>
-#include <thread>
 
 namespace TestingTools {
     void MouseClick(int x, int y) {
-        // @TODO: Hacky sleep to pass MouseClickToCloseWindowAfterRunningInfiniteMessageLoop() test for MS Windows windows on the game engine
-        // Root cause is that clicking the close button immediately after window creation doesn't get added to the event queue
-        // There's some sort of ~10ms warm up period that is required (or something else slowing it down), and none of the window events are helpful
-        // The sleep is actually supposed to be at the end of WindowSystem::CreateWindowProcess(), but I moved it to the testing framework
-        // click function because 1. windows doesn't have this problem so this cross-platform test should not delay WindowsOS unnecessarily and I don't want
-        // messy ifdef's in the test (if MouseClick gets used in other tests, then I might have to use #ifdefs in the test and move this sleep out of here)
-        // 2. I don't want to add a sleep to the game engine code just for testing purposes (which will slow down other tests too)
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
         SetCursorPos(x, y);
 
         mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
@@ -134,7 +123,7 @@ namespace TestingTools {
 
     void MouseClick(int x, int y)
     {
-        // @TODO: Hacky sleep to pass MouseClickToCloseWindowAfterRunningInfiniteMessageLoop() test for X11 windows on the game engine
+        // Hacky sleep to pass MouseClickToCloseWindowAfterRunningInfiniteMessageLoop() test for X11 windows on the game engine
         // Root cause is that clicking the close button immediately after window creation doesn't get added to the event queue
         // There's some sort of ~80-95ms warm up period that is required (or something else slowing it down), and none of the window events are helpful
         // The sleep is actually supposed to be at the end of WindowSystem::CreateWindowProcess(), but I moved it to the testing framework
