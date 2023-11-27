@@ -11,6 +11,13 @@ void TestingTools::MouseClick(int x, int y) {
     mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
 }
 
+TestingTools::CursorProperties TestingTools::GetCursorPosition() {
+    POINT cursorPosition;
+    GetCursorPos(&cursorPosition);
+
+    return CursorProperties{cursorPosition.x, cursorPosition.y};
+}
+
 #endif // _WIN32
 
 #ifdef __linux__

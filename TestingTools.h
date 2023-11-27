@@ -2,6 +2,13 @@
 
 namespace TestingTools
 {
+    struct CursorProperties
+    {
+        int x;
+        int y;
+    };
+
+    CursorProperties GetCursorPosition();
     void MouseClick(int x, int y);
 }
 
@@ -12,13 +19,6 @@ namespace TestingTools
 
 namespace TestingTools
 {
-    struct CursorProperties
-    {
-        int x;
-        int y;
-    };
-
-    CursorProperties GetCursorPosition();
     Window FindWindowByName(Display *display, Window root, const char *name);
     XRRCrtcInfo GetPrimaryMonitor(Display *display);
     void MoveWindowToTopRight(Display *display, Window window, XRRCrtcInfo targetMonitor);

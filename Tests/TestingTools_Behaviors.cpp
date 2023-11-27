@@ -1,6 +1,24 @@
 #include "TestingFramework.h"
 #include "TestingTools.h"
 
+#include <chrono>
+#include <thread>
+
+S_TEST(TestingTools, MouseClickShouldVisiblyMoveMouse)
+{
+    TestingTools::MouseClick(800, 400);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    TestingTools::CursorProperties cursorProperties = TestingTools::GetCursorPosition();
+    S_EXPECT_EQ(cursorProperties.x, 800);
+    S_EXPECT_EQ(cursorProperties.y, 400);
+
+    TestingTools::MouseClick(600, 500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    cursorProperties = TestingTools::GetCursorPosition();
+    S_EXPECT_EQ(cursorProperties.x, 600);
+    S_EXPECT_EQ(cursorProperties.y, 500);
+}
+
 #ifdef _WIN32
 
 #include <Windows.h>
@@ -26,23 +44,6 @@ S_TEST(TestingTools, MouseClick)
 #endif // _WIN32
 
 #ifdef __linux__
-
-#include <chrono>
-#include <thread>
-
-S_TEST(TestingTools, MouseClickShouldVisiblyMoveMouse)
-{
-    // Given a call to MoveMouseTo(800, 400) with the destination being X: 2500, Y: 1000
-    TestingTools::MouseClick(800, 400);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    // When I get the mouse position
-    TestingTools::CursorProperties cursorProperties = TestingTools::GetCursorPosition();
-
-    // Then the mouse should be at (800, 400)
-    S_EXPECT_EQ(cursorProperties.x, 800);
-    S_EXPECT_EQ(cursorProperties.y, 400);
-}
 
 S_TEST(TestingTools, MouseClickCanCloseWindow)
 {
