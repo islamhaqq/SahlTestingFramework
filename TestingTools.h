@@ -1,15 +1,12 @@
-#ifdef _WIN32
+#pragma once
 
+#ifdef _WIN32
 
 #include <Windows.h>
 
-namespace TestingTools {
-    void MouseClick(int x, int y) {
-        SetCursorPos(x, y);
-
-        mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-        mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-    }
+namespace TestingTools
+{
+    void MouseClick(int x, int y);
 }
 
 #endif // _WIN32
@@ -25,8 +22,10 @@ namespace TestingTools {
 #include <chrono>
 #include <thread>
 
-namespace TestingTools {
-    struct CursorProperties {
+namespace TestingTools
+{
+    struct CursorProperties
+    {
         int x;
         int y;
     };
