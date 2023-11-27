@@ -25,7 +25,7 @@ S_TEST(TestingTools, MouseClick)
 {
     // Given an app opened
     system("start wordpad.exe");
-    Sleep(1000); // Wait to make sure Notepad is open
+    std::this_thread::sleep_for(std::chrono::milliseconds(250)); // Wait to make sure Notepad is open
     HWND windowHandle = FindWindow(NULL, "Document - Wordpad");
     S_ASSERT_TRUE(IsWindow(windowHandle));
 
@@ -33,7 +33,7 @@ S_TEST(TestingTools, MouseClick)
     RECT rect;
     GetWindowRect(windowHandle, &rect);
     TestingTools::MouseClick(rect.right - 20, rect.top + 20);
-    Sleep(1000);
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
 
     // Then it should be closed
     S_ASSERT_FALSE(IsWindow(windowHandle));
