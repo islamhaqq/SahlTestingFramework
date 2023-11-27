@@ -2,8 +2,6 @@
 
 #ifdef _WIN32
 
-#include <Windows.h>
-
 namespace TestingTools
 {
     void MouseClick(int x, int y);

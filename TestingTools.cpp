@@ -2,6 +2,8 @@
 
 #ifdef _WIN32
 
+#include <Windows.h>
+
 void TestingTools::MouseClick(int x, int y) {
     SetCursorPos(x, y);
 
