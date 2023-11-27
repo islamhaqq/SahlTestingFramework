@@ -7,13 +7,11 @@
 S_TEST(TestingTools, MouseClickShouldVisiblyMoveMouse)
 {
     TestingTools::MouseClick(800, 400);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     TestingTools::CursorProperties cursorProperties = TestingTools::GetCursorPosition();
     S_EXPECT_EQ(cursorProperties.x, 800);
     S_EXPECT_EQ(cursorProperties.y, 400);
 
     TestingTools::MouseClick(600, 500);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     cursorProperties = TestingTools::GetCursorPosition();
     S_EXPECT_EQ(cursorProperties.x, 600);
     S_EXPECT_EQ(cursorProperties.y, 500);
