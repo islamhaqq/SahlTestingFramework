@@ -4,19 +4,13 @@
 struct TestState {
     int total = 0;
     int passed = 0;
-
-    static bool checkTestStateIsEqual(const int expectedTestCount, const int expectedPassedTests, const TestState testState) {
-        auto totalIsEqual = testState.total == expectedTestCount;
-        auto passedIsEqual = testState.passed == expectedPassedTests;
-        return totalIsEqual && passedIsEqual;
-    }
 };
 
 void testBoolean(bool assertion, TestState &state);
 
 std::string getTotalTestCountString(const TestState state);
 
-const bool checkTestStateIsEqual(const int expectedTestCount, const int expectedPassedTests, const TestState testState);
+static bool checkTestStateIsEqual(const int expectedTestCount, const int expectedPassedTests, const TestState testState);
 
 /**
  * Requirements for custom testing framework:
@@ -39,7 +33,7 @@ int main()
     testBoolean(1 == 3, testState);
 
     // Has correct test count (pass, fail, totalIs5)
-    assert(TestState::checkTestStateIsEqual(4, 3, testState));
+    assert(checkTestStateIsEqual(4, 3, testState));
     assert(testState.total - testState.passed == expectedFailedTests);
 
     // Outputs totalIs5 tests
@@ -48,13 +42,15 @@ int main()
     assert(actual1 == expected);
 
     testBoolean(15 + 100 - 10 == 100 + 5, testState);
-    assert(TestState::checkTestStateIsEqual(5, 4, testState));
+    assert(checkTestStateIsEqual(5, 4, testState));
     assert(testState.total - testState.passed == 1);
     const auto &expected2 = "Total Tests: 5";
     const auto &actual2 = getTotalTestCountString(testState);
     assert(actual2 == expected2);
 
     testBoolean(95 + 5 == 100, testState);
+    assert(checkTestStateIsEqual(6, 5, testState));
+    assert(testState.total - testState.passed == 1);
     auto expected3 = "Total Tests: 6";
     std::string actual3 = getTotalTestCountString(testState);
     assert(actual3 == expected3);
@@ -69,4 +65,8 @@ std::string getTotalTestCountString(const TestState state) {
 void testBoolean(bool assertion, TestState &state) {
     state.total += 1;
     state.passed += assertion;
+}
+
+bool checkTestStateIsEqual(const int expectedTestCount, const int expectedPassedTests, const TestState testState) {
+    return testState.total == expectedTestCount && testState.passed == expectedPassedTests;
 }
