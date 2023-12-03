@@ -1,5 +1,4 @@
 #include <cassert>
-#include <cstring>
 #include <string>
 
 struct TestState {
@@ -60,10 +59,7 @@ int main()
 }
 
 std::string getTotalTestCountString(const TestState state) {
-    std::string prefix = std::string("Total Tests: ");
-    auto totalTests3 = std::to_string(state.totalTestCount);
-    auto actual3 = prefix + totalTests3;
-    return actual3;
+    return std::string("Total Tests: ") + std::to_string(state.totalTestCount);
 }
 
 void runTest(bool assertion, TestState &state) {
