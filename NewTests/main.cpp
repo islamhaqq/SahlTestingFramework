@@ -9,7 +9,7 @@ struct TestState {
 
 void runTest(bool assertion, TestState &state);
 
-std::string getString(const TestState state);
+std::string getTotalTestCountString(const TestState state);
 
 /**
  * Requirements for custom testing framework:
@@ -40,35 +40,26 @@ int main()
 
     // Outputs total tests
     const auto &expected = std::string("Total Tests: 4");
-
-    const auto &actual1 = getString(state);
-
+    const auto &actual1 = getTotalTestCountString(state);
     assert(actual1 == expected);
 
     runTest(15 + 100 - 10 == 100 + 5, state);
-
     assert(state.totalTestCount == 5);
     assert(state.totalPassedTests == 4);
     assert(state.totalTestCount - state.totalPassedTests == 1);
-
     const auto &expected2 = "Total Tests: 5";
-
-    const auto &actual2 = getString(state);
-
+    const auto &actual2 = getTotalTestCountString(state);
     assert(actual2 == expected2);
 
     runTest(95 + 5 == 100, state);
-
     auto expected3 = "Total Tests: 6";
-
-    std::string actual3 = getString(state);
-
+    std::string actual3 = getTotalTestCountString(state);
     assert(actual3 == expected3);
 
     return 0;
 }
 
-std::string getString(const TestState state) {
+std::string getTotalTestCountString(const TestState state) {
     std::string prefix = std::string("Total Tests: ");
     auto totalTests3 = std::to_string(state.totalTestCount);
     auto actual3 = prefix + totalTests3;
