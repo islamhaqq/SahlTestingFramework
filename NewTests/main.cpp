@@ -1,5 +1,9 @@
 #include <cassert>
 #include <string>
+#include <chrono>
+#include <thread>
+#include <iostream>
+#include <vector>
 
 struct TestState {
     int total = 0;
@@ -54,6 +58,45 @@ int main()
     auto expected3 = "Total Tests: 6";
     std::string actual3 = getTotalTestCountString(testState);
     assert(actual3 == expected3);
+
+
+    // ==================== Parallelization ====================
+
+
+    int expectedDuration = 4;
+    int individualRuntime = 1;
+    int threads = 4;
+
+    auto starTime = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < threads; i++) {
+        std::this_thread::sleep_for(std::chrono::seconds(individualRuntime));
+    }
+    auto endTime = std::chrono::high_resolution_clock::now();
+    int finalDuration = std::chrono::duration_cast<std::chrono::seconds>(endTime - starTime).count();
+    std::cout << "Runtime: " << finalDuration << std::endl;
+
+    assert(finalDuration == expectedDuration);
+
+    int expectedDuration2 = 1;
+    int individualRuntime2 = 1;
+
+    auto starTime2 = std::chrono::high_resolution_clock::now();
+    std::vector<std::thread> threadVector;
+    for (int i = 0; i < threads; i++) {
+        threadVector.emplace_back([individualRuntime2]() {
+            std::this_thread::sleep_for(std::chrono::seconds(individualRuntime2));
+        });
+    }
+    for (auto &thread : threadVector) {
+        thread.join();
+    }
+    auto endTime2 = std::chrono::high_resolution_clock::now();
+    int finalDuration2 = std::chrono::duration_cast<std::chrono::seconds>(endTime2 - starTime2).count();
+    std::cout << "Runtime: " << finalDuration2 << std::endl;
+
+    assert(finalDuration2 == expectedDuration2);
+
+    // ==================== End ====================
 
     return 0;
 }
