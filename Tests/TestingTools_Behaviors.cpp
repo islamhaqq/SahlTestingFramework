@@ -25,7 +25,7 @@ S_TEST(TestingTools, MouseClick)
 {
     // Given an app opened
     system("start wordpad.exe");
-    std::this_thread::sleep_for(std::chrono::milliseconds(250)); // Wait to make sure Notepad is open
+    std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Wait to make sure Notepad is open
     HWND windowHandle = FindWindow(NULL, "Document - Wordpad");
     S_ASSERT_TRUE(IsWindow(windowHandle));
 
