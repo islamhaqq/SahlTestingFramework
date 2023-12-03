@@ -25,6 +25,8 @@ if (UNIX AND NOT APPLE)
     endif()
 endif()
 
+# Add test suites for the testing framework.
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     add_subdirectory(Tests)
+    add_subdirectory(NewTests)
 endif()
