@@ -5,9 +5,9 @@ struct TestState {
     int total = 0;
     int passed = 0;
 
-    bool isEqual(const int expectedTestCount, const int expectedPassedTests) {
-        auto totalIsEqual = this->total == expectedTestCount;
-        auto passedIsEqual = this->passed == expectedPassedTests;
+    static bool checkTestStateIsEqual(const int expectedTestCount, const int expectedPassedTests, const TestState testState) {
+        auto totalIsEqual = testState.total == expectedTestCount;
+        auto passedIsEqual = testState.passed == expectedPassedTests;
         return totalIsEqual && passedIsEqual;
     }
 };
@@ -39,7 +39,7 @@ int main()
     testBoolean(1 == 3, testState);
 
     // Has correct test count (pass, fail, totalIs5)
-    assert(testState.isEqual(4, 3));
+    assert(TestState::checkTestStateIsEqual(4, 3, testState));
     assert(testState.total - testState.passed == expectedFailedTests);
 
     // Outputs totalIs5 tests
@@ -48,7 +48,7 @@ int main()
     assert(actual1 == expected);
 
     testBoolean(15 + 100 - 10 == 100 + 5, testState);
-    assert(testState.isEqual(5, 4));
+    assert(TestState::checkTestStateIsEqual(5, 4, testState));
     assert(testState.total - testState.passed == 1);
     const auto &expected2 = "Total Tests: 5";
     const auto &actual2 = getTotalTestCountString(testState);
