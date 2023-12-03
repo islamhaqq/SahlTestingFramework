@@ -1,6 +1,11 @@
 #include <cassert>
 
-void foo(bool assertion, int &totalTestCount, int &totalPassedTests);
+struct TestState {
+    int totalTestCount = 0;
+    int totalPassedTests = 0;
+};
+
+void getState(TestState &state, bool assertion);
 
 /**
  * Requirements for custom testing framework:
@@ -14,17 +19,14 @@ void foo(bool assertion, int &totalTestCount, int &totalPassedTests);
  */
 int main()
 {
-    struct {
-        int totalTestCount = 0;
-        int totalPassedTests = 0;
-    } state;
+     TestState state{};
 
     // Production code
 
-    foo(true == true, state.totalTestCount, state.totalPassedTests);
-    foo(1 == 1, state.totalTestCount, state.totalPassedTests);
-    foo(1 != 2, state.totalTestCount, state.totalPassedTests);
-    foo(1 == 3, state.totalTestCount, state.totalPassedTests);
+    getState(state, true == true);
+    getState(state, 1 == 1);
+    getState(state, 1 != 2);
+    getState(state, 1 == 3);
 
     // Assertions
     int expectedTestCount = 4;
@@ -39,7 +41,7 @@ int main()
     return 0;
 }
 
-void foo(bool assertion, int &totalTestCount, int &totalPassedTests) {
-    totalTestCount += 1;
-    totalPassedTests += assertion;
+void getState(TestState &state, bool assertion) {
+    state.totalTestCount += 1;
+    state.totalPassedTests += assertion;
 }
