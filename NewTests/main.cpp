@@ -7,6 +7,7 @@
 #include <queue>
 #include <mutex>
 #include <atomic>
+#include <functional>
 
 struct TestState {
     int total = 0;
@@ -108,7 +109,7 @@ int main()
 
     assert(finalDuration2 - expectedDuration2 <= tolerance2);
 
-    // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 50ms (unoptimized -- more tests with reduced tolerance)
+    // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 50ms
     int expectedDuration3 = 100;
     int tolerance3 = 50;
     int threads16 = 16;
@@ -154,6 +155,42 @@ int main()
 
     assert(answer == 1600);
     assert(totalDuration - expectedDuration3 <= tolerance3);
+//
+//    // Dynamic parallelization -- optimal threads -- 64 function tasks -- tolerance 50ms
+//    int expectedDuration4 = 1600;
+//    int tolerance4 = 50;
+//
+//    // function tasks
+//    std::vector<int> tasks2 = {100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
+//                              100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
+//                              100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
+//                              100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5};
+//    std::sort(tasks2.begin(), tasks2.end(), std::greater<int>());
+//    int taskWorkload = 0;
+//    for (int task : tasks2) {
+//        taskWorkload += task;
+//    }
+//    int threads = std::thread::hardware_concurrency();
+//    int optimalThreadWorkload = taskWorkload / threads;
+//
+//    std::queue<std::function<int()>> functionTaskQueue;
+//    for (int task : tasks2) {
+//        functionTaskQueue.emplace([task]() {
+//            std::this_thread::sleep_for(std::chrono::milliseconds(task));
+//            return task;
+//        });
+//    }
+//
+//    int totalDuration4 = 0;
+//    while(!functionTaskQueue.empty())
+//    {
+//        auto task = functionTaskQueue.front();
+//        functionTaskQueue.pop();
+//        totalDuration4 += task();
+//    }
+//    std::cout << "Runtime: " << totalDuration4 << "ms" << std::endl;
+//
+//    assert(totalDuration4 - expectedDuration4 <= tolerance4);
 
     // ==================== End ====================
 
