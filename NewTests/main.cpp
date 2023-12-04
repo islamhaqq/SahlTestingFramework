@@ -1,51 +1,6 @@
-#include <cassert>
-#include <string>
-#include <chrono>
-#include <thread>
-#include <iostream>
-#include <vector>
-#include <queue>
-#include <mutex>
-#include <atomic>
-#include <functional>
-
-static const int ONE_MS_FIB_N = 1136363; // Approximate number of iterations to take 1ms on i9-1200K
-struct TestState {
-    int total = 0;
-    int passed = 0;
-};
-
-void testBoolean(bool assertion, TestState &state) {
-    state.total += 1;
-    state.passed += assertion;
-}
-
-std::string getTotalTestCountString(const TestState state) {
-    return "Total Tests: " + std::to_string(state.total);
-}
-
-bool checkTestStateIsEqual(const TestState testState, const int expectedTestCount, const int expectedPassedTests) {
-    return testState.total == expectedTestCount && testState.passed == expectedPassedTests;
-}
-
-int getTotalFailedTests(const TestState state) {
-    return state.total - state.passed;
-}
-
-int fibonacci(int n) {
-    if (n <= 1) {
-        return n;
-    }
-    int a = 0, b = 1, c;
-    for (int i = 2; i <= n; ++i) {
-        c = a + b;
-        a = b;
-        b = c;
-    }
-    return b;
-}
-
 /**
+ * Custom Parallelized Test Framework That Beats Google Test
+ *
  * Requirements
     1. Output whether a test passes or fails
     Requirement 1.1: System identifies a passing test.
@@ -89,6 +44,53 @@ int fibonacci(int n) {
     Requirement 7.3: System handles the execution of individual tests.
     Requirement 7.4: System ensures proper sequence of test execution.
  */
+
+#include <cassert>
+#include <string>
+#include <chrono>
+#include <thread>
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <mutex>
+#include <atomic>
+
+static const int ONE_MS_FIB_N = 1136363; // Approximate number of iterations to take 1ms on i9-1200K
+struct TestState {
+    int total = 0;
+    int passed = 0;
+};
+
+void testBoolean(bool assertion, TestState &state) {
+    state.total += 1;
+    state.passed += assertion;
+}
+
+std::string getTotalTestCountString(const TestState state) {
+    return "Total Tests: " + std::to_string(state.total);
+}
+
+bool checkTestStateIsEqual(const TestState testState, const int expectedTestCount, const int expectedPassedTests) {
+    return testState.total == expectedTestCount && testState.passed == expectedPassedTests;
+}
+
+int getTotalFailedTests(const TestState state) {
+    return state.total - state.passed;
+}
+
+int fibonacci(int n) {
+    if (n <= 1) {
+        return n;
+    }
+    int a = 0, b = 1, c;
+    for (int i = 2; i <= n; ++i) {
+        c = a + b;
+        a = b;
+        b = c;
+    }
+    return b;
+}
+
 int main() {
     int expectedFailedTests = 1;
     TestState testState{};
