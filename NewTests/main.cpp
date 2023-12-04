@@ -71,14 +71,14 @@ int main()
     // ==================== Parallelization ====================
 
 
-    // Single threaded
+    // No parallelization -- 1 thread -- 4 tasks -- tolerance 40ms
     int expectedDuration = 1000;
     int individualRuntime = 250;
-    int threads4 = 4;
+    int fourTasks = 4;
     int tolerance = 40;
 
     auto starTime = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < threads4; i++) {
+    for (int i = 0; i < fourTasks; i++) {
         std::this_thread::sleep_for(std::chrono::milliseconds (individualRuntime));
     }
     auto endTime = std::chrono::high_resolution_clock::now();
@@ -87,10 +87,11 @@ int main()
 
     assert(finalDuration - expectedDuration <= tolerance);
 
-    // Static parallelization -- 4 threads
+    // Static parallelization -- 4 threads -- 4 tasks -- tolerance 25ms
     int expectedDuration2 = 250;
     int individualRuntime2 = 250;
     int tolerance2 = 25;
+    int threads4 = 4;
 
     auto starTime2 = std::chrono::high_resolution_clock::now();
     std::vector<std::thread> threadVector;
