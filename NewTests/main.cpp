@@ -100,9 +100,9 @@ int main()
 
     assert(finalDuration2 - expectedDuration2 >= -tolerance && finalDuration2 - expectedDuration2 <= tolerance);
 
-    // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 100ms (unoptimized -- more tests with reduced tolerance)
+    // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 50ms (unoptimized -- more tests with reduced tolerance)
     int expectedDuration3 = 100;
-    int tolerance3 = 100;
+    int tolerance3 = 50;
     int threads16 = 16;
 
     std::vector<int> tasks = {100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
@@ -116,6 +116,7 @@ int main()
     threadVector3.reserve(threads16);
     std::mutex queueMutex;
     std::queue<int> taskQueue;
+    std::sort(tasks.begin(), tasks.end(), std::greater<int>());
     for (int task : tasks) {
         taskQueue.push(task);
     }
