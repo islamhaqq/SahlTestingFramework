@@ -6,6 +6,7 @@
 #include <vector>
 #include <queue>
 #include <mutex>
+#include <atomic>
 
 struct TestState {
     int total = 0;
@@ -65,11 +66,11 @@ int main()
     // Single threaded
     int expectedDuration = 1000;
     int individualRuntime = 250;
-    int threads = 4;
+    int threads4 = 4;
     int tolerance = 50;
 
     auto starTime = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < threads; i++) {
+    for (int i = 0; i < threads4; i++) {
         std::this_thread::sleep_for(std::chrono::milliseconds (individualRuntime));
     }
     auto endTime = std::chrono::high_resolution_clock::now();
@@ -84,8 +85,8 @@ int main()
 
     auto starTime2 = std::chrono::high_resolution_clock::now();
     std::vector<std::thread> threadVector;
-    threadVector.reserve(threads);
-    for (int i = 0; i < threads; i++) {
+    threadVector.reserve(threads4);
+    for (int i = 0; i < threads4; i++) {
         threadVector.emplace_back([individualRuntime2]() {
             std::this_thread::sleep_for(std::chrono::milliseconds (individualRuntime2));
         });
@@ -112,7 +113,7 @@ int main()
     answer = 0;
     const auto startime3 = std::chrono::high_resolution_clock::now();
     std::vector<std::thread> threadVector3;
-    threadVector3.reserve(threads);
+    threadVector3.reserve(threads16);
     std::mutex queueMutex;
     std::queue<int> taskQueue;
     for (int task : tasks) {
