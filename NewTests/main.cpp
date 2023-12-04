@@ -14,8 +14,8 @@ struct TestState {
 };
 
 void testBoolean(bool assertion, TestState &state);
-std::string getTotalTestCountString(const TestState state);
-static bool checkTestStateIsEqual(const int expectedTestCount, const int expectedPassedTests, const TestState testState);
+std::string getTotalTestCountString(TestState state);
+static bool checkTestStateIsEqual(int expectedTestCount, int expectedPassedTests, TestState testState);
 
 /**
  * Requirements for custom testing framework:
@@ -63,11 +63,12 @@ int main()
 
     // ==================== Parallelization ====================
 
+
     // Single threaded
     int expectedDuration = 1000;
     int individualRuntime = 250;
     int threads4 = 4;
-    int tolerance = 50;
+    int tolerance = 25;
 
     auto starTime = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < threads4; i++) {
@@ -111,12 +112,14 @@ int main()
                               100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5};
     std::atomic<int> answer;
     answer = 0;
-    const auto startime3 = std::chrono::high_resolution_clock::now();
+    const auto startTime3 = std::chrono::high_resolution_clock::now();
     std::vector<std::thread> threadVector3;
     threadVector3.reserve(threads16);
     std::mutex queueMutex;
     std::queue<int> taskQueue;
+    // Greedy algorithm
     std::sort(tasks.begin(), tasks.end(), std::greater<int>());
+    // Queue based task distribution
     for (int task : tasks) {
         taskQueue.push(task);
     }
@@ -139,7 +142,7 @@ int main()
         thread.join();
     }
     const auto endTime3 = std::chrono::high_resolution_clock::now();
-    int totalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime3 - startime3).count();
+    int totalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime3 - startTime3).count();
     std::cout << "Runtime: " << totalDuration << "ms" << std::endl;
 
     assert(answer == 1600);
