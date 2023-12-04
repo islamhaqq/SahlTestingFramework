@@ -109,7 +109,7 @@ int main()
 
     assert(finalDuration2 - expectedDuration2 <= tolerance2);
 
-    // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 50ms
+    // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 50ms -- sorted queue based
     int expectedDuration3 = 100;
     int tolerance3 = 50;
     int threads16 = 16;
@@ -125,7 +125,6 @@ int main()
     threadVector3.reserve(threads16);
     std::mutex queueMutex;
     std::queue<int> taskQueue;
-    // Greedy algorithm
     std::sort(tasks.begin(), tasks.end(), std::greater<int>());
     // Queue based task distribution
     for (int task : tasks) {
@@ -155,6 +154,58 @@ int main()
 
     assert(answer == 1600);
     assert(totalDuration - expectedDuration3 <= tolerance3);
+
+
+    // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 15ms -- greedy no queue
+    int expectedDuration4 = 100;
+    int tolerance4 = 15;
+
+    std::vector<int> tasks4 = {100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
+                              100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
+                              100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
+                              100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5};
+    int totalWorkload = 0;
+    for (int task : tasks) {
+        totalWorkload += task;
+    }
+    int optimalThreadWorkload = totalWorkload / threads16;
+    std::vector<std::vector<int>> threadTasks;
+    threadTasks.reserve(threads16);
+    std::sort(tasks.begin(), tasks.end(), std::greater<int>());
+    for (int i = 0; i < threads16; i++) {
+        int workload = 0;
+        std::vector<int> threadTask;
+        while (workload < optimalThreadWorkload) {
+            threadTask.push_back(tasks.back());
+            workload += tasks.back();
+            tasks.pop_back();
+        }
+        threadTasks.push_back(threadTask);
+    }
+
+    std::atomic<int> answer4;
+    answer4 = 0;
+    std::vector<std::thread> threadVector4;
+    threadVector4.reserve(threads16);
+    const auto startTime4 = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < threads16; i++) {
+        threadVector4.emplace_back([threadTasks, &answer4]() {
+            for (int task : threadTasks.back()) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(task));
+                answer4 += task;
+            }
+        });
+    }
+    for (auto &thread : threadVector4) {
+        thread.join();
+    }
+    const auto endTime4 = std::chrono::high_resolution_clock::now();
+    int totalDuration4 = std::chrono::duration_cast<std::chrono::milliseconds>(endTime4 - startTime4).count();
+    std::cout << "Runtime: " << totalDuration4 << "ms" << std::endl;
+    std::cout << "Answer: " << answer4 << std::endl;
+    assert(answer4 == 1600);
+    assert(totalDuration4 - expectedDuration4 <= tolerance4);
+
 //
 //    // Dynamic parallelization -- optimal threads -- 64 function tasks -- tolerance 50ms
 //    int expectedDuration4 = 1600;
