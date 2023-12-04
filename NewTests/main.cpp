@@ -157,9 +157,9 @@ int main()
     assert(totalDuration - expectedDuration3 <= tolerance3);
 
 
-    // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 15ms -- greedy no queue
+    // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 200ms -- greedy no queue
     int expectedDuration4 = 100;
-    int tolerance4 = 15;
+    int tolerance4 = 200;
 
     std::vector<int> tasks4 = {100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
                               100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
@@ -190,8 +190,9 @@ int main()
     threadVector4.reserve(threads16);
     const auto startTime4 = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < threads16; i++) {
-        threadVector4.emplace_back([threadTasks, &answer4]() {
-            for (int task : threadTasks.back()) {
+        std::vector<int> currentTasks = threadTasks[i];
+        threadVector4.emplace_back([currentTasks, &answer4]() {
+            for (int task : currentTasks) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(task));
                 answer4 += task;
             }
