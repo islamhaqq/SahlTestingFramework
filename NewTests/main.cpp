@@ -13,18 +13,32 @@ struct TestState {
     int passed = 0;
 };
 
-void testBoolean(bool assertion, TestState &state);
-std::string getTotalTestCountString(TestState state);
-static bool checkTestStateIsEqual(int expectedTestCount, int expectedPassedTests, TestState testState);
+void testBoolean(bool assertion, TestState &state) {
+    state.total += 1;
+    state.passed += assertion;
+}
+
+std::string getTotalTestCountString(const TestState state) {
+    return "Total Tests: " + std::to_string(state.total);
+}
+
+bool checkTestStateIsEqual(const TestState testState, const int expectedTestCount, const int expectedPassedTests) {
+    return testState.total == expectedTestCount && testState.passed == expectedPassedTests;
+}
+
+int getTotalFailedTests(const TestState state) {
+    return state.total - state.passed;
+}
 
 /**
- * Requirements for custom testing framework:
- * 2. Output runtime for each test
- * 3. Output runtime for all tests
- * 4. Output number of tests
- * 5. Output number of failed tests
- * 6. Output number of passed tests
- * 7. Output error message for failed tests
+ * To do:
+ * Output runtime for each test
+ * Output total runtime for all tests
+ * Output number of tests
+ * Output number of failed tests
+ * Output number of passed tests
+ * Output error message for failed tests
+ * Parallelize tests
  */
 int main()
 {
@@ -37,28 +51,20 @@ int main()
     testBoolean(1 != 2, testState);
     testBoolean(1 == 3, testState);
 
-    // Has correct test count (pass, fail, totalIs5)
-    assert(checkTestStateIsEqual(4, 3, testState));
-    assert(testState.total - testState.passed == expectedFailedTests);
-
-    // Outputs totalIs5 tests
-    const auto &expected = std::string("Total Tests: 4");
-    const auto &actual1 = getTotalTestCountString(testState);
-    assert(actual1 == expected);
+    // Has correct test count (pass, fail, total)
+    assert(checkTestStateIsEqual(testState, 4, 3));
+    assert(getTotalFailedTests(testState) == expectedFailedTests);
+    assert(getTotalTestCountString(testState) == "Total Tests: 4");
 
     testBoolean(15 + 100 - 10 == 100 + 5, testState);
-    assert(checkTestStateIsEqual(5, 4, testState));
-    assert(testState.total - testState.passed == 1);
-    const auto &expected2 = "Total Tests: 5";
-    const auto &actual2 = getTotalTestCountString(testState);
-    assert(actual2 == expected2);
+    assert(checkTestStateIsEqual(testState, 5, 4));
+    assert(getTotalFailedTests(testState) == 1);
+    assert(getTotalTestCountString(testState) == "Total Tests: 5");
 
     testBoolean(95 + 5 == 100, testState);
-    assert(checkTestStateIsEqual(6, 5, testState));
-    assert(testState.total - testState.passed == 1);
-    auto expected3 = "Total Tests: 6";
-    std::string actual3 = getTotalTestCountString(testState);
-    assert(actual3 == expected3);
+    assert(checkTestStateIsEqual(testState, 6, 5));
+    assert(getTotalFailedTests(testState) == 1);
+    assert(getTotalTestCountString(testState) == "Total Tests: 6");
 
 
     // ==================== Parallelization ====================
@@ -152,17 +158,4 @@ int main()
     // ==================== End ====================
 
     return 0;
-}
-
-std::string getTotalTestCountString(const TestState state) {
-    return std::string("Total Tests: ") + std::to_string(state.total);
-}
-
-void testBoolean(bool assertion, TestState &state) {
-    state.total += 1;
-    state.passed += assertion;
-}
-
-bool checkTestStateIsEqual(const int expectedTestCount, const int expectedPassedTests, const TestState testState) {
-    return testState.total == expectedTestCount && testState.passed == expectedPassedTests;
 }
