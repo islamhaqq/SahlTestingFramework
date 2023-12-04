@@ -11,9 +11,7 @@ struct TestState {
 };
 
 void testBoolean(bool assertion, TestState &state);
-
 std::string getTotalTestCountString(const TestState state);
-
 static bool checkTestStateIsEqual(const int expectedTestCount, const int expectedPassedTests, const TestState testState);
 
 /**
@@ -63,38 +61,40 @@ int main()
     // ==================== Parallelization ====================
 
 
-    int expectedDuration = 4;
-    int individualRuntime = 1;
+    int expectedDuration = 1000;
+    int individualRuntime = 250;
     int threads = 4;
+    int tolerance = 50;
 
     auto starTime = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < threads; i++) {
-        std::this_thread::sleep_for(std::chrono::seconds(individualRuntime));
+        std::this_thread::sleep_for(std::chrono::milliseconds (individualRuntime));
     }
     auto endTime = std::chrono::high_resolution_clock::now();
-    int finalDuration = std::chrono::duration_cast<std::chrono::seconds>(endTime - starTime).count();
-    std::cout << "Runtime: " << finalDuration << std::endl;
+    int finalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - starTime).count();
+    std::cout << "Runtime: " << finalDuration << "ms" << std::endl;
 
-    assert(finalDuration == expectedDuration);
+    assert(finalDuration - expectedDuration >= -tolerance && finalDuration - expectedDuration <= tolerance);
 
-    int expectedDuration2 = 1;
-    int individualRuntime2 = 1;
+    int expectedDuration2 = 250;
+    int individualRuntime2 = 250;
 
     auto starTime2 = std::chrono::high_resolution_clock::now();
     std::vector<std::thread> threadVector;
+    threadVector.reserve(threads);
     for (int i = 0; i < threads; i++) {
         threadVector.emplace_back([individualRuntime2]() {
-            std::this_thread::sleep_for(std::chrono::seconds(individualRuntime2));
+            std::this_thread::sleep_for(std::chrono::milliseconds (individualRuntime2));
         });
     }
     for (auto &thread : threadVector) {
         thread.join();
     }
     auto endTime2 = std::chrono::high_resolution_clock::now();
-    int finalDuration2 = std::chrono::duration_cast<std::chrono::seconds>(endTime2 - starTime2).count();
-    std::cout << "Runtime: " << finalDuration2 << std::endl;
+    int finalDuration2 = std::chrono::duration_cast<std::chrono::milliseconds>(endTime2 - starTime2).count();
+    std::cout << "Runtime: " << finalDuration2 << "ms" << std::endl;
 
-    assert(finalDuration2 == expectedDuration2);
+    assert(finalDuration2 - expectedDuration2 >= -tolerance && finalDuration2 - expectedDuration2 <= tolerance);
 
     // ==================== End ====================
 
