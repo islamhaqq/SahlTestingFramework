@@ -9,6 +9,7 @@
 #include <atomic>
 #include <functional>
 
+static const int ONE_MS_FIB_N = 1136363; // Approximate number of iterations to take 1ms on i9-1200K
 struct TestState {
     int total = 0;
     int passed = 0;
@@ -29,6 +30,19 @@ bool checkTestStateIsEqual(const TestState testState, const int expectedTestCoun
 
 int getTotalFailedTests(const TestState state) {
     return state.total - state.passed;
+}
+
+int fibonacci(int n) {
+    if (n <= 1) {
+        return n;
+    }
+    int a = 0, b = 1, c;
+    for (int i = 2; i <= n; ++i) {
+        c = a + b;
+        a = b;
+        b = c;
+    }
+    return b;
 }
 
 /**
@@ -85,7 +99,7 @@ int main()
     int finalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - starTime).count();
     std::cout << "Runtime: " << finalDuration << "ms" << std::endl;
 
-    assert(finalDuration - expectedDuration <= tolerance);
+    assert(std::abs(finalDuration - expectedDuration) <= tolerance);
 
     // Static parallelization -- 4 threads -- 4 tasks -- tolerance 25ms
     int expectedDuration2 = 250;
@@ -108,7 +122,7 @@ int main()
     int finalDuration2 = std::chrono::duration_cast<std::chrono::milliseconds>(endTime2 - starTime2).count();
     std::cout << "Runtime: " << finalDuration2 << "ms" << std::endl;
 
-    assert(finalDuration2 - expectedDuration2 <= tolerance2);
+    assert(std::abs(finalDuration2 - expectedDuration2) <= tolerance2);
 
     // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 50ms -- sorted queue based
     int expectedDuration3 = 100;
@@ -141,7 +155,7 @@ int main()
                     task = taskQueue.front();
                     taskQueue.pop();
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds(task));
+                fibonacci(ONE_MS_FIB_N * task);
                 answer += task;
             }
         });
@@ -154,32 +168,32 @@ int main()
     std::cout << "Runtime: " << totalDuration << "ms" << std::endl;
 
     assert(answer == 1600);
-    assert(totalDuration - expectedDuration3 <= tolerance3);
+    assert(std::abs(totalDuration - expectedDuration3) <= tolerance3);
 
 
-    // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 200ms -- greedy no queue
+    // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 15ms -- greedy no queue
     int expectedDuration4 = 100;
-    int tolerance4 = 200;
+    int tolerance4 = 20;
 
     std::vector<int> tasks4 = {100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
                               100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
                               100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
                               100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5};
     int totalWorkload = 0;
-    for (int task : tasks) {
+    for (int task : tasks4) {
         totalWorkload += task;
     }
     int optimalThreadWorkload = totalWorkload / threads16;
     std::vector<std::vector<int>> threadTasks;
     threadTasks.reserve(threads16);
-    std::sort(tasks.begin(), tasks.end(), std::greater<int>());
+    std::sort(tasks4.begin(), tasks4.end(), std::greater<int>());
     for (int i = 0; i < threads16; i++) {
         int workload = 0;
         std::vector<int> threadTask;
         while (workload < optimalThreadWorkload) {
-            threadTask.push_back(tasks.back());
-            workload += tasks.back();
-            tasks.pop_back();
+            threadTask.push_back(tasks4.back());
+            workload += tasks4.back();
+            tasks4.pop_back();
         }
         threadTasks.push_back(threadTask);
     }
@@ -190,10 +204,10 @@ int main()
     threadVector4.reserve(threads16);
     const auto startTime4 = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < threads16; i++) {
-        std::vector<int> currentTasks = threadTasks[i];
-        threadVector4.emplace_back([currentTasks, &answer4]() {
-            for (int task : currentTasks) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(task));
+        std::vector<int> currentThreadTasks = threadTasks[i];
+        threadVector4.emplace_back([currentThreadTasks, &answer4, i]() {
+            for (int task : currentThreadTasks) {
+                fibonacci(ONE_MS_FIB_N * task);
                 answer4 += task;
             }
         });
@@ -204,9 +218,8 @@ int main()
     const auto endTime4 = std::chrono::high_resolution_clock::now();
     int totalDuration4 = std::chrono::duration_cast<std::chrono::milliseconds>(endTime4 - startTime4).count();
     std::cout << "Runtime: " << totalDuration4 << "ms" << std::endl;
-    std::cout << "Answer: " << answer4 << std::endl;
     assert(answer4 == 1600);
-    assert(totalDuration4 - expectedDuration4 <= tolerance4);
+    assert(std::abs(totalDuration4 - expectedDuration4) <= tolerance4);
 
 //
 //    // Dynamic parallelization -- optimal threads -- 64 function tasks -- tolerance 50ms
