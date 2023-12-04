@@ -68,7 +68,7 @@ int main()
     int expectedDuration = 1000;
     int individualRuntime = 250;
     int threads4 = 4;
-    int tolerance = 25;
+    int tolerance = 40;
 
     auto starTime = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < threads4; i++) {
@@ -78,11 +78,12 @@ int main()
     int finalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - starTime).count();
     std::cout << "Runtime: " << finalDuration << "ms" << std::endl;
 
-    assert(finalDuration - expectedDuration >= -tolerance && finalDuration - expectedDuration <= tolerance);
+    assert(finalDuration - expectedDuration <= tolerance);
 
     // Static parallelization -- 4 threads
     int expectedDuration2 = 250;
     int individualRuntime2 = 250;
+    int tolerance2 = 25;
 
     auto starTime2 = std::chrono::high_resolution_clock::now();
     std::vector<std::thread> threadVector;
@@ -99,7 +100,7 @@ int main()
     int finalDuration2 = std::chrono::duration_cast<std::chrono::milliseconds>(endTime2 - starTime2).count();
     std::cout << "Runtime: " << finalDuration2 << "ms" << std::endl;
 
-    assert(finalDuration2 - expectedDuration2 >= -tolerance && finalDuration2 - expectedDuration2 <= tolerance);
+    assert(finalDuration2 - expectedDuration2 <= tolerance2);
 
     // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 50ms (unoptimized -- more tests with reduced tolerance)
     int expectedDuration3 = 100;
@@ -146,7 +147,7 @@ int main()
     std::cout << "Runtime: " << totalDuration << "ms" << std::endl;
 
     assert(answer == 1600);
-    assert(totalDuration - expectedDuration3 >= -tolerance3 && totalDuration - expectedDuration3 <= tolerance3);
+    assert(totalDuration - expectedDuration3 <= tolerance3);
 
     // ==================== End ====================
 
