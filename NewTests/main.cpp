@@ -46,17 +46,50 @@ int fibonacci(int n) {
 }
 
 /**
- * To do:
- * Output runtime for each test
- * Output total runtime for all tests
- * Output number of tests
- * Output number of failed tests
- * Output number of passed tests
- * Output error message for failed tests
- * Parallelize tests
+ * Requirements
+    1. Output whether a test passes or fails
+    Requirement 1.1: System identifies a passing test.
+    Requirement 1.2: System identifies a failing test.
+    Requirement 1.3: System logs the pass/fail status of each test.
+    Requirement 1.4: System displays the pass/fail status after test execution.
+
+    2. Print out the total number of tests
+    Requirement 2.1: System counts the total number of tests in the suite.
+    Requirement 2.2: System stores the total test count.
+    Requirement 2.3: System displays the total test count before test execution.
+    Requirement 2.4: System displays the total test count after test execution.
+
+    3. Output the number of failed tests
+    Requirement 3.1: System tracks each failed test during execution.
+    Requirement 3.2: System counts the total number of failed tests.
+    Requirement 3.3: System stores the count of failed tests.
+    Requirement 3.4: System displays the count of failed tests after execution.
+
+    4. Output the exception or error
+    Requirement 4.1: System captures exceptions or errors from each test.
+    Requirement 4.2: System logs details of exceptions or errors.
+    Requirement 4.3: System associates errors with the corresponding test.
+    Requirement 4.4: System displays exception/error details after a test fails.
+
+    5. Parallelization: Run all tests using all threads
+    Requirement 5.1: System identifies tests that can run in parallel.
+    Requirement 5.2: System divides tests into batches for parallel execution.
+    Requirement 5.3: System assigns test batches to available threads.
+    Requirement 5.4: System initiates parallel test execution across threads.
+
+    6. Optimize thread utilization with minimal idling
+    Requirement 6.1: System monitors load and availability of each thread.
+    Requirement 6.2: System reassigns tests to idle threads.
+    Requirement 6.3: System balances the load evenly across threads.
+    Requirement 6.4: System minimizes idle time for each thread.
+
+    7. Ability to run the tests
+    Requirement 7.1: System provides a command to start test execution.
+    Requirement 7.2: System coordinates test execution processes.
+    Requirement 7.3: System handles the execution of individual tests.
+    Requirement 7.4: System ensures proper sequence of test execution.
  */
-int main()
-{
+int main() {
     int expectedFailedTests = 1;
     TestState testState{};
 
@@ -83,6 +116,10 @@ int main()
 
 
     // ==================== Parallelization ====================
+
+    // Requirement 5. Parallelization: Run all tests using all threads
+
+    // Requirement 5.1: System identifies tests that can run in parallel.
 
 
     // No parallelization -- 1 thread -- 4 tasks -- tolerance 40ms
@@ -221,42 +258,6 @@ int main()
     assert(answer4 == 1600);
     assert(std::abs(totalDuration4 - expectedDuration4) <= tolerance4);
 
-//
-//    // Dynamic parallelization -- optimal threads -- 64 function tasks -- tolerance 50ms
-//    int expectedDuration4 = 1600;
-//    int tolerance4 = 50;
-//
-//    // function tasks
-//    std::vector<int> tasks2 = {100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
-//                              100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
-//                              100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
-//                              100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5};
-//    std::sort(tasks2.begin(), tasks2.end(), std::greater<int>());
-//    int taskWorkload = 0;
-//    for (int task : tasks2) {
-//        taskWorkload += task;
-//    }
-//    int threads = std::thread::hardware_concurrency();
-//    int optimalThreadWorkload = taskWorkload / threads;
-//
-//    std::queue<std::function<int()>> functionTaskQueue;
-//    for (int task : tasks2) {
-//        functionTaskQueue.emplace([task]() {
-//            std::this_thread::sleep_for(std::chrono::milliseconds(task));
-//            return task;
-//        });
-//    }
-//
-//    int totalDuration4 = 0;
-//    while(!functionTaskQueue.empty())
-//    {
-//        auto task = functionTaskQueue.front();
-//        functionTaskQueue.pop();
-//        totalDuration4 += task();
-//    }
-//    std::cout << "Runtime: " << totalDuration4 << "ms" << std::endl;
-//
-//    assert(totalDuration4 - expectedDuration4 <= tolerance4);
 
     // ==================== End ====================
 
