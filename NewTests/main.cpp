@@ -4,6 +4,8 @@
 #include <thread>
 #include <iostream>
 #include <vector>
+#include <queue>
+#include <mutex>
 
 struct TestState {
     int total = 0;
@@ -60,7 +62,7 @@ int main()
 
     // ==================== Parallelization ====================
 
-
+    // Single threaded
     int expectedDuration = 1000;
     int individualRuntime = 250;
     int threads = 4;
@@ -76,6 +78,7 @@ int main()
 
     assert(finalDuration - expectedDuration >= -tolerance && finalDuration - expectedDuration <= tolerance);
 
+    // Static parallelization -- 4 threads
     int expectedDuration2 = 250;
     int individualRuntime2 = 250;
 
@@ -95,6 +98,50 @@ int main()
     std::cout << "Runtime: " << finalDuration2 << "ms" << std::endl;
 
     assert(finalDuration2 - expectedDuration2 >= -tolerance && finalDuration2 - expectedDuration2 <= tolerance);
+
+    // Dynamic parallelization -- 16 threads -- 64 tasks -- tolerance 100ms (unoptimized -- more tests with reduced tolerance)
+    int expectedDuration3 = 100;
+    int tolerance3 = 100;
+    int threads16 = 16;
+
+    std::vector<int> tasks = {100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
+                              100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
+                              100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5,
+                              100, 50, 25, 0, 10, 0, 50, 25, 50, 50, 0, 25, 0, 5, 5, 5};
+    std::atomic<int> answer;
+    answer = 0;
+    const auto startime3 = std::chrono::high_resolution_clock::now();
+    std::vector<std::thread> threadVector3;
+    threadVector3.reserve(threads);
+    std::mutex queueMutex;
+    std::queue<int> taskQueue;
+    for (int task : tasks) {
+        taskQueue.push(task);
+    }
+    for (int i = 0; i < threads16; i++) {
+        threadVector3.emplace_back([tasks, &answer, &taskQueue, &queueMutex]() {
+            while (true) {
+                int task;
+                {
+                    std::unique_lock<std::mutex> lock(queueMutex);
+                    if (taskQueue.empty()) break;
+                    task = taskQueue.front();
+                    taskQueue.pop();
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(task));
+                answer += task;
+            }
+        });
+    }
+    for (auto &thread : threadVector3) {
+        thread.join();
+    }
+    const auto endTime3 = std::chrono::high_resolution_clock::now();
+    int totalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime3 - startime3).count();
+    std::cout << "Runtime: " << totalDuration << "ms" << std::endl;
+
+    assert(answer == 1600);
+    assert(totalDuration - expectedDuration3 >= -tolerance3 && totalDuration - expectedDuration3 <= tolerance3);
 
     // ==================== End ====================
 
