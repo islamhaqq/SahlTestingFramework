@@ -66,7 +66,7 @@ void testBoolean(bool assertion, TestState &state) {
     state.passed += assertion;
 }
 
-std::string getTotalTestCountString(const TestState state) {
+std::string createTotalTestCountString(const TestState state) {
     return "Total Tests: " + std::to_string(state.total);
 }
 
@@ -91,6 +91,15 @@ int fibonacci(int n) {
     return b;
 }
 
+std::string createRuntimeString(int runtimeMilliseconds) {
+    return "Runtime: " + std::to_string(runtimeMilliseconds) + "ms";
+}
+
+void outputRuntime(int runtimeMilliseconds)
+{
+    std::cout << createRuntimeString(runtimeMilliseconds) << std::endl;
+}
+
 int main() {
     int expectedFailedTests = 1;
     TestState testState{};
@@ -104,17 +113,17 @@ int main() {
     // Has correct test count (pass, fail, total)
     assert(checkTestStateIsEqual(testState, 4, 3));
     assert(getTotalFailedTests(testState) == expectedFailedTests);
-    assert(getTotalTestCountString(testState) == "Total Tests: 4");
+    assert(createTotalTestCountString(testState) == "Total Tests: 4");
 
     testBoolean(15 + 100 - 10 == 100 + 5, testState);
     assert(checkTestStateIsEqual(testState, 5, 4));
     assert(getTotalFailedTests(testState) == 1);
-    assert(getTotalTestCountString(testState) == "Total Tests: 5");
+    assert(createTotalTestCountString(testState) == "Total Tests: 5");
 
     testBoolean(95 + 5 == 100, testState);
     assert(checkTestStateIsEqual(testState, 6, 5));
     assert(getTotalFailedTests(testState) == 1);
-    assert(getTotalTestCountString(testState) == "Total Tests: 6");
+    assert(createTotalTestCountString(testState) == "Total Tests: 6");
 
 
     // ==================== Parallelization ====================
@@ -136,7 +145,7 @@ int main() {
     }
     auto endTime = std::chrono::high_resolution_clock::now();
     int finalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - starTime).count();
-    std::cout << "Runtime: " << finalDuration << "ms" << std::endl;
+    outputRuntime(finalDuration);
 
     assert(std::abs(finalDuration - expectedDuration) <= tolerance);
 
@@ -159,7 +168,7 @@ int main() {
     }
     auto endTime2 = std::chrono::high_resolution_clock::now();
     int finalDuration2 = std::chrono::duration_cast<std::chrono::milliseconds>(endTime2 - starTime2).count();
-    std::cout << "Runtime: " << finalDuration2 << "ms" << std::endl;
+    outputRuntime(finalDuration2);
 
     assert(std::abs(finalDuration2 - expectedDuration2) <= tolerance2);
 
@@ -204,7 +213,7 @@ int main() {
     }
     const auto endTime3 = std::chrono::high_resolution_clock::now();
     int totalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime3 - startTime3).count();
-    std::cout << "Runtime: " << totalDuration << "ms" << std::endl;
+    outputRuntime(totalDuration);
 
     assert(answer == 1600);
     assert(std::abs(totalDuration - expectedDuration3) <= tolerance3);
