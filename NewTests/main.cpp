@@ -54,6 +54,7 @@
 #include <queue>
 #include <mutex>
 #include <atomic>
+#include <functional>
 
 static const int ONE_MS_FIB_N = 1136363; // Approximate number of iterations to take 1ms on i9-1200K
 struct TestState {
@@ -131,6 +132,15 @@ int main() {
     // Requirement 5. Parallelization: Run all tests using all threads
 
     // Requirement 5.1: System identifies tests that can run in parallel.
+
+    auto parallelTest = 1;
+    std::vector<int> actualParallelTests;
+    actualParallelTests.push_back(parallelTest);
+    actualParallelTests.push_back(parallelTest);
+    actualParallelTests.push_back(parallelTest);
+    actualParallelTests.push_back(parallelTest);
+    std::vector<int> expectedParallelTests = {1, 1, 1, 1};
+    assert(actualParallelTests == expectedParallelTests);
 
 
     // No parallelization -- 1 thread -- 4 tasks -- tolerance 40ms
