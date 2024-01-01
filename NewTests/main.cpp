@@ -56,7 +56,7 @@
 #include <atomic>
 #include <functional>
 
-static const int ONE_MS_FIB_N = 1136363; // Approximate number of iterations to take 1ms on i9-1200K
+static const int ITERATIONS_FOR_ONE_MS_FIB_N_I9_1200K = 1136363; // Approximate number of iterations to take 1ms on i9-1200K
 struct TestState {
     int total = 0;
     int passed = 0;
@@ -213,7 +213,7 @@ int main() {
                     task = taskQueue.front();
                     taskQueue.pop();
                 }
-                fibonacci(ONE_MS_FIB_N * task);
+                fibonacci(ITERATIONS_FOR_ONE_MS_FIB_N_I9_1200K * task);
                 answer += task;
             }
         });
@@ -265,7 +265,7 @@ int main() {
         std::vector<int> currentThreadTasks = threadTasks[i];
         threadVector4.emplace_back([currentThreadTasks, &answer4, i]() {
             for (int task : currentThreadTasks) {
-                fibonacci(ONE_MS_FIB_N * task);
+                fibonacci(ITERATIONS_FOR_ONE_MS_FIB_N_I9_1200K * task);
                 answer4 += task;
             }
         });
